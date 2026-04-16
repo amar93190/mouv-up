@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --soli-bg: #f1f1f4;
+    --soli-surface: #f6f6f9;
+    --soli-text: #111318;
+    --soli-muted: #7f828b;
+    --soli-primary: #1f66e5;
+  }
+
+  html {
+    font-family: "Manrope", "Avenir Next", "Segoe UI", sans-serif;
+    color: var(--soli-text);
+    background-color: var(--soli-bg);
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--soli-bg);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  button,
+  input,
+  textarea {
+    font: inherit;
+  }
+}
