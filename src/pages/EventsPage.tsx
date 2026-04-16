@@ -46,8 +46,8 @@ function EventsPage() {
   return (
     <div className="space-y-5 pb-3">
       <section>
-        <h1 className="text-6xl font-black leading-[0.9] text-[#0f1218]">Cette semaine</h1>
-        <p className="mt-3 max-w-[340px] text-lg leading-snug text-[#7f828b]">
+        <h1 className="text-[32px] font-semibold tracking-[-0.01em] text-black">Cette semaine</h1>
+        <p className="mt-2 max-w-[340px] text-base text-[#868688]">
           Filtre les séances utiles pour toi. Appuie pour voir les détails.
         </p>
       </section>
@@ -57,7 +57,7 @@ function EventsPage() {
           <button
             key={filter}
             type="button"
-            className="shrink-0 rounded-full border border-[#cfd2d8] bg-[#f1f1f4] px-5 py-2 text-lg font-medium text-[#4f535e]"
+            className="shrink-0 rounded-full border border-[#ccc] bg-white px-4 py-2.5 text-base font-medium text-[#4f4f52]"
           >
             {filter}
           </button>

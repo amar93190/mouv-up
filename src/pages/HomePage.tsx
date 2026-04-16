@@ -1,25 +1,30 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import MatchingModal from "../components/MatchingModal";
 import { useAuth } from "../contexts/AuthContext";
 import { useDocumentMeta } from "../hooks/useDocumentMeta";
 import { isSupabaseConfigured } from "../lib/supabase";
 import { fetchPublicEvents, fetchPublicMainEvents } from "../services/events";
 import { EventItem } from "../types/domain";
-import { buildCountdownLabel, formatDateTime } from "../utils/date";
+import { buildCountdownLabel } from "../utils/date";
 import { getHomeEventMode } from "../utils/eventMode";
 
 const fallbackSessions = [
   {
     title: "Yoga doux inclusif",
-    subtitle: "Maison Sport Santé, 12 Rue des Lilas · PMR · Débutant",
-    color: "from-[#1f66e5] to-[#2f7dff]",
-    textClass: "text-white"
+    subtitle: "Maison Sport Santé, 12 Rue Des Lilas - PMR - Débutant",
+    cardClass: "bg-[#0760fc] text-white",
+    buttonClass: "bg-[#3980fd]",
+    deco: "/images/figma/home-card-blue.svg",
+    metaClass: "text-[#cccccc]"
   },
   {
-    title: "Football sans pression",
-    subtitle: "Gymnase Caillaux, 75013 Paris · Mixte",
-    color: "from-[#7e56df] to-[#9a70ff]",
-    textClass: "text-white"
+    title: "Le Football sans pression",
+    subtitle: "Gymnase Caillaux, 3 Rue Caillaux, 75013 Paris",
+    cardClass: "bg-[#8a5df4] text-white",
+    buttonClass: "bg-[#a17df6]",
+    deco: "/images/figma/home-card-purple.svg",
+    metaClass: "text-[#cccccc]"
   }
 ];
 
@@ -30,6 +35,7 @@ function HomePage() {
   );
 
   const { profile, isAuthenticated } = useAuth();
+  const [isMatchingOpen, setIsMatchingOpen] = useState(false);
   const [mainEvents, setMainEvents] = useState<EventItem[]>([]);
   const [events, setEvents] = useState<EventItem[]>([]);
 
@@ -55,71 +61,62 @@ function HomePage() {
 
   const mode = useMemo(() => getHomeEventMode(mainEvents), [mainEvents]);
 
+  const sessions =
+    events.length > 0
+      ? events.map((event, index) => ({
+          title: event.title,
+          subtitle: event.location,
+          cardClass: index === 0 ? "bg-[#0760fc] text-white" : "bg-[#8a5df4] text-white",
+          buttonClass: index === 0 ? "bg-[#3980fd]" : "bg-[#a17df6]",
+          deco: index === 0 ? "/images/figma/home-card-blue.svg" : "/images/figma/home-card-purple.svg",
+          metaClass: "text-[#cccccc]"
+        }))
+      : fallbackSessions;
+
   return (
-    <div className="space-y-6 pb-4">
+    <div className="space-y-9 pb-4">
       <section className="space-y-2">
-        <h1 className="text-[44px] font-black leading-none text-[#0f1218]">
+        <h1 className="text-[32px] font-semibold tracking-[-0.01em] text-black">
           Bienvenue, {profile?.full_name?.split(" ")[0] ?? "Aminata"} <span aria-hidden="true">👋🏼</span>
         </h1>
-        <p className="max-w-[320px] text-[28px] font-semibold leading-[1.08] text-[#0f1218]">
-          Le sport inclusif, à ton rythme.
-        </p>
-        <p className="max-w-[360px] text-lg leading-snug text-[#7f828b]">
+        <p className="max-w-[352px] text-base text-[#868688]">
           On t'aide à trouver une séance qui respecte ton énergie, ton budget et tes besoins.
         </p>
+        {mode.type === "countdown" ? (
+          <p className="text-sm font-medium text-[#4f4f52]">{buildCountdownLabel(mode.daysRemaining)}</p>
+        ) : null}
+        {mode.type === "active" ? <p className="text-sm font-medium text-[#4f4f52]">Événement principal en cours</p> : null}
       </section>
 
-      <section className="space-y-3">
-        <Link
-          to="/evenements"
-          className="flex h-14 items-center justify-center rounded-full bg-brand-500 px-6 text-lg font-semibold text-white"
+      <section className="space-y-4">
+        <button
+          type="button"
+          onClick={() => setIsMatchingOpen(true)}
+          className="flex h-14 w-full items-center justify-center gap-2 rounded-[56px] bg-[#0760fc] px-4 text-base font-medium text-white"
         >
           Trouver mon sport idéal
-        </Link>
+          <SearchIcon />
+        </button>
         <Link
           to="/evenements"
-          className="flex h-14 items-center justify-center rounded-full border border-brand-500 bg-white px-6 text-lg font-semibold text-[#262a31]"
+          className="flex h-14 items-center justify-center gap-2 rounded-[56px] border border-[#0760fc] bg-white px-4 text-base font-semibold text-[#232325]"
         >
           Voir le programme
+          <CalendarIcon />
         </Link>
       </section>
 
-      {mode.type !== "normal" ? (
-        <section className="rounded-3xl bg-gradient-to-r from-[#0f3d96] to-[#1e67e8] p-5 text-white">
-          <p className="text-sm font-semibold uppercase tracking-wide text-blue-100">Événement principal</p>
-          <h2 className="mt-1 text-2xl font-bold">{mode.event.title}</h2>
-          <p className="mt-2 text-sm text-blue-100">{formatDateTime(mode.event.start_date)} · {mode.event.location}</p>
-          {mode.type === "countdown" ? (
-            <p className="mt-3 text-base font-semibold">{buildCountdownLabel(mode.daysRemaining)}</p>
-          ) : (
-            <p className="mt-3 text-base font-semibold">Événement en cours</p>
-          )}
-          <Link to={`/evenements/${mode.event.slug}`} className="mt-4 inline-flex rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#1949b4]">
-            Ouvrir
-          </Link>
-        </section>
-      ) : null}
+      <section className="rounded-xl bg-[#fafafa] px-4 py-8">
+        <p className="text-base font-medium tracking-[-0.02em] text-[#0760fc]">Activité</p>
+        <h2 className="mt-1 text-[24px] font-semibold tracking-[-0.02em] text-black">Tes prochaines séances</h2>
 
-      <section className="rounded-3xl bg-[#f0f0f3] p-4">
-        <p className="text-xl font-semibold text-brand-500">Activité</p>
-        <h2 className="mt-1 text-4xl font-black leading-tight text-[#0f1218]">Tes prochaines séances</h2>
-
-        <div className="mt-4 space-y-3">
-          {(events.length > 0
-            ? events.map((event, index) => ({
-                title: event.title,
-                subtitle: `${event.location} · ${formatDateTime(event.start_date)}`,
-                color: index % 2 === 0 ? "from-[#1f66e5] to-[#2f7dff]" : "from-[#7e56df] to-[#9a70ff]",
-                textClass: "text-white"
-              }))
-            : fallbackSessions
-          ).map((session) => (
-            <article key={session.title} className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${session.color} p-5`}>
-              <div className={`max-w-[240px] ${session.textClass}`}>
-                <h3 className="text-2xl font-semibold leading-tight">{session.title}</h3>
-                <p className="mt-2 text-sm opacity-90">{session.subtitle}</p>
-              </div>
-              <span className="absolute right-4 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 text-2xl text-white">
+        <div className="mt-4 flex gap-4 overflow-x-auto pb-2">
+          {sessions.map((session) => (
+            <article key={session.title} className={`relative w-[241px] shrink-0 overflow-hidden rounded-[20px] px-4 pb-6 pt-12 ${session.cardClass}`}>
+              <img src={session.deco} alt="" aria-hidden="true" className="pointer-events-none absolute -right-10 -top-12 h-[112px] w-[112px]" />
+              <h3 className="w-[152px] text-[18px] font-medium leading-[1.2] tracking-[-0.02em]">{session.title}</h3>
+              <p className={`mt-1 w-[151px] text-xs leading-[1.5] ${session.metaClass}`}>{session.subtitle}</p>
+              <span className={`absolute right-4 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full text-2xl text-white ${session.buttonClass}`}>
                 ↗
               </span>
             </article>
@@ -127,28 +124,56 @@ function HomePage() {
         </div>
       </section>
 
-      <section className="rounded-3xl bg-[#f0f0f3] p-4">
-        <p className="text-xl font-semibold text-brand-500">Mouv’Pass</p>
-        <h2 className="mt-1 text-4xl font-black leading-tight text-[#0f1218]">Ton élan du moment</h2>
-
-        <div className="mt-4 flex items-center gap-4 rounded-2xl bg-[#ededf0] p-4">
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-[conic-gradient(#1f66e5_270deg,#d8d8dd_0deg)]">
-            <div className="flex h-14 w-14 flex-col items-center justify-center rounded-full bg-white">
-              <span className="text-2xl font-black">150</span>
-              <span className="text-sm text-[#6d7078]">Pts</span>
-            </div>
-          </div>
-          <p className="text-xl font-semibold leading-snug text-[#171a20]">Encore 50 points avant le prochain palier</p>
+      <section className="space-y-6">
+        <div>
+          <p className="text-base font-medium tracking-[-0.02em] text-[#0760fc]">Mouv&apos;Pass</p>
+          <h2 className="mt-1 text-[24px] font-semibold tracking-[-0.02em] text-black">Ton élan du moment</h2>
         </div>
 
-        <Link
-          to={isAuthenticated ? "/profil" : "/connexion"}
-          className="mt-4 inline-flex rounded-full border border-[#d1d4db] px-4 py-2 text-sm font-semibold text-[#2a2f38]"
-        >
+        <div className="flex items-center gap-4 rounded-lg bg-[#fafafa] p-4">
+          <div className="relative h-20 w-20 shrink-0">
+            <img src="/images/figma/ring-base.svg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full" />
+            <img src="/images/figma/ring-progress.svg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full" />
+            <img src="/images/figma/ring-inner.svg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center pb-1">
+              <span className="text-[20px] font-semibold leading-none tracking-[-0.02em]">150</span>
+              <span className="text-[14px] leading-none tracking-[-0.02em] text-[#474749]">Pts</span>
+            </div>
+          </div>
+
+          <div className="min-w-0">
+            <p className="text-base font-semibold leading-tight tracking-[-0.02em] text-black">Encore 50 points avant le prochain palier</p>
+            <p className="mt-2 text-base leading-tight tracking-[-0.02em] text-[#474749]">
+              Chaque présence crée du lien et débloque un nouveau bonus solidaire
+            </p>
+          </div>
+        </div>
+
+        <Link to={isAuthenticated ? "/profil" : "/connexion"} className="inline-flex rounded-full border border-[#cccccc] px-4 py-2 text-sm font-medium text-[#232325]">
           Voir mon pass
         </Link>
       </section>
+
+      <MatchingModal isOpen={isMatchingOpen} onClose={() => setIsMatchingOpen(false)} />
     </div>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <circle cx="11" cy="11" r="6" />
+      <path d="m20 20-4.2-4.2" />
+    </svg>
+  );
+}
+
+function CalendarIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <rect x="4" y="5" width="16" height="15" rx="2" />
+      <path d="M8 3v4M16 3v4M4 10h16" />
+    </svg>
   );
 }
 

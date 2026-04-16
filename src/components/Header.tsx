@@ -23,7 +23,7 @@ function Header() {
     <header className="mx-auto w-full max-w-[430px] px-4 pt-4">
       <div className="mb-5 flex items-center justify-between">
         <Link to="/" aria-label="Aller à l'accueil">
-          <img src="/images/solimouv-logo.svg" alt="Solimouv’" className="h-12 w-auto" />
+          <img src="/images/figma/logo-home.svg" alt="Solimouv’" className="h-[54px] w-[105px] object-contain" />
         </Link>
 
         <Link

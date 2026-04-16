@@ -51,8 +51,8 @@ function AboutPage() {
   return (
     <div className="space-y-5 pb-3">
       <section>
-        <h1 className="text-6xl font-black leading-[0.9] text-[#0f1218]">Nos partenaires</h1>
-        <p className="mt-3 max-w-[340px] text-lg leading-snug text-[#7f828b]">
+        <h1 className="text-[32px] font-semibold tracking-[-0.01em] text-black">Nos partenaires</h1>
+        <p className="mt-2 max-w-[352px] text-base text-[#868688]">
           Des lieux accueillants pour pratiquer, rencontrer et rester en confiance.
         </p>
       </section>
@@ -61,12 +61,12 @@ function AboutPage() {
 
       <section className="space-y-3">
         {list.map((partner) => (
-          <article key={partner.name} className="flex items-center justify-between rounded-2xl bg-[#ededf1] p-4">
+          <article key={partner.name} className="flex items-start justify-between rounded-lg bg-[#fafafa] p-4">
             <div>
-              <h2 className="text-[28px] font-bold uppercase leading-tight text-[#14171e]">{partner.name}</h2>
-              <p className="mt-1 text-[29px] text-[#4f535e]">{partner.city}</p>
+              <h2 className="max-w-[260px] text-base font-semibold uppercase tracking-[-0.02em] text-black">{partner.name}</h2>
+              <p className="mt-2 text-base text-[#474749]">{partner.city}</p>
             </div>
-            <span className="text-4xl leading-none text-[#2a2e37]">+</span>
+            <span className="text-[36px] leading-none text-[#232325]">+</span>
           </article>
         ))}
       </section>
