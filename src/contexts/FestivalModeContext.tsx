@@ -7,6 +7,8 @@ type FestivalModeContextValue = {
 };
 
 const STORAGE_KEY = "solimouv:festival-mode";
+const DEFAULT_THEME_COLOR = "#ececf0";
+const FESTIVAL_THEME_COLOR = "#050f4b";
 
 const FestivalModeContext = createContext<FestivalModeContextValue | undefined>(undefined);
 
@@ -22,6 +24,24 @@ export function FestivalModeProvider({ children }: FestivalModeProviderProps) {
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, String(festivalMode));
+  }, [festivalMode]);
+
+  useEffect(() => {
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    const appleStatusMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+    const nextColor = festivalMode ? FESTIVAL_THEME_COLOR : DEFAULT_THEME_COLOR;
+
+    if (themeColorMeta) {
+      themeColorMeta.setAttribute("content", nextColor);
+    }
+
+    // iOS standalone: keep safe-area bar visually aligned with the active mode.
+    if (appleStatusMeta) {
+      appleStatusMeta.setAttribute("content", festivalMode ? "black-translucent" : "default");
+    }
+
+    document.documentElement.style.backgroundColor = nextColor;
+    document.body.style.backgroundColor = nextColor;
   }, [festivalMode]);
 
   const value = useMemo<FestivalModeContextValue>(
