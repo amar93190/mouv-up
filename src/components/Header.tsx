@@ -8,6 +8,30 @@ type BeforeInstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
 };
 
+function getInstallHelpMessage() {
+  if (typeof window === "undefined") return "Installation non disponible pour l'instant.";
+
+  const ua = window.navigator.userAgent || "";
+  const isIOS = /iPhone|iPad|iPod/i.test(ua);
+  const isAndroid = /Android/i.test(ua);
+  const isInAppBrowser =
+    /FBAN|FBAV|Instagram|Line|Twitter|LinkedInApp|Snapchat|TikTok|wv/i.test(ua);
+
+  if (isInAppBrowser) {
+    return "Installation non disponible dans ce navigateur intégré. Ouvre ce lien dans Safari ou Chrome, puis réessaie l’installation.";
+  }
+
+  if (isIOS) {
+    return "Sur iPhone/iPad: ouvre le menu Partager puis choisis « Sur l’écran d’accueil » pour installer l’app.";
+  }
+
+  if (isAndroid) {
+    return "Sur Android: ouvre le menu du navigateur (⋮) puis choisis « Installer l’application » ou « Ajouter à l’écran d’accueil ».";
+  }
+
+  return "Installation non disponible pour l'instant sur cet appareil. Essaie avec Chrome, Edge ou Safari.";
+}
+
 function isStandaloneMode() {
   if (typeof window === "undefined") return false;
   const mediaMatch = window.matchMedia("(display-mode: standalone)").matches;
@@ -51,7 +75,7 @@ function Header() {
         import.meta.env.DEV && import.meta.env.VITE_ENABLE_PWA_DEV !== "true"
           ? " En local, active VITE_ENABLE_PWA_DEV=true puis redémarre le serveur."
           : "";
-      window.alert("Installation non disponible pour l'instant." + devHint);
+      window.alert(getInstallHelpMessage() + devHint);
       return;
     }
 
