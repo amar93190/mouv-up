@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import LoadingState from "../components/LoadingState";
 import MatchingModal from "../components/MatchingModal";
 import PointsGauge from "../components/PointsGauge";
+import ProgramEventModal from "../components/ProgramEventModal";
 import { useFestivalMode } from "../contexts/FestivalModeContext";
 import { useAuth } from "../hooks/useAuth";
 import { useDocumentMeta } from "../hooks/useDocumentMeta";
@@ -65,7 +66,9 @@ function HomePage() {
   const { festivalMode, toggleFestivalMode } = useFestivalMode();
   const [isMatchingOpen, setIsMatchingOpen] = useState(false);
   const [mainEvents, setMainEvents] = useState<EventItem[]>([]);
+  const [allEvents, setAllEvents] = useState<EventItem[]>([]);
   const [events, setEvents] = useState<EventItem[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -87,6 +90,7 @@ function HomePage() {
         if (!active) return;
 
         setMainEvents(mainEventData);
+        setAllEvents(eventData);
         setEvents(eventData.slice(0, 2));
       } catch (serviceError) {
         if (!active) return;
@@ -280,7 +284,20 @@ function HomePage() {
         </Link>
       </section>
 
-      <MatchingModal isOpen={isMatchingOpen} onClose={() => setIsMatchingOpen(false)} />
+      <MatchingModal
+        isOpen={isMatchingOpen}
+        availableEvents={allEvents}
+        onClose={() => setIsMatchingOpen(false)}
+        onOpenEvent={(event) => {
+          setSelectedEvent(event);
+          setIsMatchingOpen(false);
+        }}
+      />
+      <ProgramEventModal
+        event={selectedEvent}
+        accentColor={festivalMode ? "#8db7ff" : "#0760fc"}
+        onClose={() => setSelectedEvent(null)}
+      />
     </div>
   );
 }

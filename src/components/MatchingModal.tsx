@@ -1,15 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { EventItem } from "../types/domain";
 
 type MatchingModalProps = {
   isOpen: boolean;
+  availableEvents: EventItem[];
   onClose: () => void;
+  onOpenEvent: (event: EventItem) => void;
 };
 
 type EnergyLevel = "douce" | "moderee" | "intense";
 type GroupPreference = "solo" | "petit-groupe" | "collectif";
 
-function MatchingModal({ isOpen, onClose }: MatchingModalProps) {
+function MatchingModal({ isOpen, availableEvents, onClose, onOpenEvent }: MatchingModalProps) {
   const [step, setStep] = useState(1);
   const [energy, setEnergy] = useState<EnergyLevel | null>(null);
   const [group, setGroup] = useState<GroupPreference | null>(null);
@@ -33,34 +36,82 @@ function MatchingModal({ isOpen, onClose }: MatchingModalProps) {
   const result = useMemo(() => {
     if (!energy || !group) {
       return {
+        event: null as EventItem | null,
         title: "Séances inclusives recommandées",
         tags: ["PMR", "Débutant"],
         hint: "On affine tes préférences pour te proposer un programme adapté."
       };
     }
 
-    if (energy === "douce") {
+    const energyKeywords: Record<EnergyLevel, string[]> = {
+      douce: ["yoga", "doux", "douce", "mobilité", "mobilite", "marche", "santé", "sante", "étirement", "etirement"],
+      moderee: ["marche", "mobilité", "mobilite", "fitness", "initiation", "decouverte", "découverte", "basket", "danse"],
+      intense: ["football", "running", "course", "tournoi", "cardio", "intense", "collectif"]
+    };
+
+    const groupKeywords: Record<GroupPreference, string[]> = {
+      solo: ["solo", "individuel", "personnalisé", "personnalise"],
+      "petit-groupe": ["petit groupe", "atelier", "initiation", "encadré", "encadre"],
+      collectif: ["collectif", "équipe", "equipe", "groupe", "football", "basket", "tournoi"]
+    };
+
+    const now = Date.now();
+    const upcoming = availableEvents.filter((event) => new Date(event.end_date).getTime() >= now);
+    const pool = upcoming.length > 0 ? upcoming : availableEvents;
+
+    if (pool.length === 0) {
       return {
-        title: "Yoga doux inclusif",
-        tags: ["PMR", "Débutant", group === "solo" ? "Solo" : "Petit groupe"],
-        hint: "Une séance calme pour reprendre confiance et bouger en douceur."
+        event: null as EventItem | null,
+        title: "Pas d'activité disponible",
+        tags: [energy === "douce" ? "Douce" : energy === "moderee" ? "Modérée" : "Intense", group === "petit-groupe" ? "Petit groupe" : group === "collectif" ? "Collectif" : "Solo"],
+        hint: "Aucune activité publiée pour le moment. Reviens bientôt ou consulte le programme."
       };
     }
 
-    if (energy === "moderee") {
-      return {
-        title: "Marche active & mobilité",
-        tags: ["Mixte", group === "collectif" ? "Collectif" : "Petit groupe"],
-        hint: "Un rythme progressif et encadré pour garder l'élan chaque semaine."
-      };
-    }
+    const ranked = pool
+      .map((event) => {
+        const text = `${event.title} ${event.short_description} ${event.long_description} ${event.location}`.toLowerCase();
+        let score = 0;
+
+        for (const keyword of energyKeywords[energy]) {
+          if (text.includes(keyword)) score += 4;
+        }
+
+        for (const keyword of groupKeywords[group]) {
+          if (text.includes(keyword)) score += 3;
+        }
+
+        if (group === "solo" && (text.includes("collectif") || text.includes("équipe") || text.includes("equipe"))) {
+          score -= 2;
+        }
+
+        if (group === "collectif" && (text.includes("collectif") || text.includes("équipe") || text.includes("equipe"))) {
+          score += 2;
+        }
+
+        const start = new Date(event.start_date).getTime();
+        const end = new Date(event.end_date).getTime();
+        if (now >= start && now <= end) score += 5;
+        if (start > now) score += 2;
+
+        return { event, score, start };
+      })
+      .sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return a.start - b.start;
+      });
+
+    const top = ranked[0]?.event ?? null;
 
     return {
-      title: "Football sans pression",
-      tags: ["Collectif", "Gratuit", "Tous niveaux"],
-      hint: "Une pratique conviviale orientée plaisir de jouer, sans jugement."
+      event: top,
+      title: top?.title ?? "Séance recommandée",
+      tags: [energy === "douce" ? "Douce" : energy === "moderee" ? "Modérée" : "Intense", group === "petit-groupe" ? "Petit groupe" : group === "collectif" ? "Collectif" : "Solo"],
+      hint:
+        top?.short_description ??
+        "On te propose cette activité selon ton énergie actuelle et ton format préféré."
     };
-  }, [energy, group]);
+  }, [availableEvents, energy, group]);
 
   if (!isOpen) return null;
 
@@ -130,6 +181,16 @@ function MatchingModal({ isOpen, onClose }: MatchingModalProps) {
               <div className="rounded-xl bg-[#fafafa] p-4">
                 <p className="text-[18px] font-semibold text-black">{result.title}</p>
                 <p className="mt-2 text-sm text-[#868688]">{result.hint}</p>
+                {result.event ? (
+                  <p className="mt-2 text-xs font-medium text-[#4f4f52]">
+                    {new Date(result.event.start_date).toLocaleString("fr-FR", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit"
+                    })} · {result.event.location}
+                  </p>
+                ) : null}
                 <div className="mt-3 flex flex-wrap gap-2">
                   {result.tags.map((tag) => (
                     <span key={tag} className="rounded-full border border-[#d6d8df] bg-white px-3 py-1 text-xs font-medium text-[#4f4f52]">
@@ -143,13 +204,23 @@ function MatchingModal({ isOpen, onClose }: MatchingModalProps) {
                 <button type="button" onClick={() => setStep(1)} className="h-12 flex-1 rounded-[56px] border border-[#d9d9de] bg-white text-sm font-semibold text-[#4f4f52]">
                   Refaire
                 </button>
-                <Link
-                  to="/evenements"
-                  onClick={onClose}
-                  className="flex h-12 flex-1 items-center justify-center rounded-[56px] bg-[#0760fc] text-base font-medium text-white"
-                >
-                  Voir le programme
-                </Link>
+                {result.event ? (
+                  <button
+                    type="button"
+                    onClick={() => onOpenEvent(result.event as EventItem)}
+                    className="flex h-12 flex-1 items-center justify-center rounded-[56px] bg-[#0760fc] text-base font-medium text-white"
+                  >
+                    Voir l&apos;activité
+                  </button>
+                ) : (
+                  <Link
+                    to="/evenements"
+                    onClick={onClose}
+                    className="flex h-12 flex-1 items-center justify-center rounded-[56px] bg-[#0760fc] text-base font-medium text-white"
+                  >
+                    Voir le programme
+                  </Link>
+                )}
               </div>
             </>
           ) : null}

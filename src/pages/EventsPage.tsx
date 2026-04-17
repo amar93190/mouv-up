@@ -91,7 +91,13 @@ function EventsPage() {
       {!loading && !error && events.length > 0 ? (
         <section className="space-y-3" aria-label="Liste des événements">
           {events.map((event, index) => (
-            <EventCard key={event.id} event={event} index={index} onOpen={setSelectedEvent} />
+            <EventCard
+              key={event.id}
+              event={event}
+              index={index}
+              onOpen={setSelectedEvent}
+              showIllustration={!festivalMode}
+            />
           ))}
         </section>
       ) : null}
