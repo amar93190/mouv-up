@@ -4,6 +4,7 @@ import LoadingState from "../components/LoadingState";
 import { useAuth } from "../hooks/useAuth";
 import { useDocumentMeta } from "../hooks/useDocumentMeta";
 import { isSupabaseConfigured } from "../lib/supabase";
+import { sendWelcomeRegistrationAutomation } from "../services/automations";
 import { fetchPublicEventBySlug } from "../services/events";
 import { cancelRegistration, fetchRegistrationByEvent, registerToEvent } from "../services/registrations";
 import { EventItem, EventRegistration } from "../types/domain";
@@ -65,6 +66,12 @@ function EventDetailPage() {
     try {
       const nextRegistration = await registerToEvent(session.user.id, event.id);
       setRegistration(nextRegistration);
+      await sendWelcomeRegistrationAutomation({
+        userId: session.user.id,
+        event,
+        registration: nextRegistration,
+        source: "event-detail"
+      });
       setActionMessage("Inscription confirmée.");
     } catch (serviceError) {
       setActionMessage((serviceError as Error).message);

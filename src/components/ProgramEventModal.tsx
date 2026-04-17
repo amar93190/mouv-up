@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { sendWelcomeRegistrationAutomation } from "../services/automations";
 import { fetchRegistrationByEvent, registerToEvent } from "../services/registrations";
 import { EventItem, EventRegistration } from "../types/domain";
 import { formatDateTime } from "../utils/date";
@@ -77,6 +78,12 @@ function ProgramEventModal({ event, accentColor = "#0760fc", onClose }: ProgramE
     try {
       const next = await registerToEvent(session.user.id, selectedEvent.id);
       setRegistration(next);
+      await sendWelcomeRegistrationAutomation({
+        userId: session.user.id,
+        event: selectedEvent,
+        registration: next,
+        source: "program-modal"
+      });
       setMessage("Inscription confirmée.");
     } catch (error) {
       setMessage((error as Error).message);
