@@ -93,6 +93,7 @@ function Header() {
           <Link to="/" className="text-lg font-extrabold text-slate-900">Solimouv’</Link>
           <nav className="flex items-center gap-2 text-sm">
             <NavLink to="/admin/evenements" className="rounded-lg px-3 py-2 text-slate-700 hover:bg-slate-100">Admin</NavLink>
+            <NavLink to="/admin/evenements/nouveau" className="rounded-lg bg-brand-600 px-3 py-2 font-semibold text-white hover:bg-brand-700">Nouveau</NavLink>
             <NavLink to="/" className="rounded-lg px-3 py-2 text-slate-700 hover:bg-slate-100">App</NavLink>
           </nav>
         </div>

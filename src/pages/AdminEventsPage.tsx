@@ -102,12 +102,17 @@ function AdminEventsPage() {
       />
 
       <div>
-        <Link
-          to="/admin/evenements/nouveau"
-          className="inline-flex rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800"
-        >
-          Créer un événement
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            to="/admin/evenements/nouveau"
+            className="inline-flex rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800"
+          >
+            Créer un événement
+          </Link>
+          <span className="text-sm text-slate-600">
+            Le même formulaire sert pour l&apos;ajout et la modification.
+          </span>
+        </div>
       </div>
 
       <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
