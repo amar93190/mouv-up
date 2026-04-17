@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import LoadingState from "../components/LoadingState";
 import MatchingModal from "../components/MatchingModal";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { useDocumentMeta } from "../hooks/useDocumentMeta";
 import { isSupabaseConfigured } from "../lib/supabase";
 import { fetchPublicEvents, fetchPublicMainEvents } from "../services/events";
@@ -38,18 +39,30 @@ function HomePage() {
   const [isMatchingOpen, setIsMatchingOpen] = useState(false);
   const [mainEvents, setMainEvents] = useState<EventItem[]>([]);
   const [events, setEvents] = useState<EventItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
 
     async function loadData() {
-      if (!isSupabaseConfigured) return;
+      if (!isSupabaseConfigured) {
+        setLoading(false);
+        return;
+      }
 
-      const [mainEventData, eventData] = await Promise.all([fetchPublicMainEvents(), fetchPublicEvents()]);
-      if (!active) return;
+      try {
+        const [mainEventData, eventData] = await Promise.all([fetchPublicMainEvents(), fetchPublicEvents()]);
+        if (!active) return;
 
-      setMainEvents(mainEventData);
-      setEvents(eventData.slice(0, 2));
+        setMainEvents(mainEventData);
+        setEvents(eventData.slice(0, 2));
+      } catch (serviceError) {
+        if (!active) return;
+        setError((serviceError as Error).message);
+      } finally {
+        if (active) setLoading(false);
+      }
     }
 
     void loadData();
@@ -60,18 +73,6 @@ function HomePage() {
   }, []);
 
   const mode = useMemo(() => getHomeEventMode(mainEvents), [mainEvents]);
-
-  const sessions =
-    events.length > 0
-      ? events.map((event, index) => ({
-          title: event.title,
-          subtitle: event.location,
-          cardClass: index === 0 ? "bg-[#0760fc] text-white" : "bg-[#8a5df4] text-white",
-          buttonClass: index === 0 ? "bg-[#3980fd]" : "bg-[#a17df6]",
-          deco: index === 0 ? "/images/figma/home-card-blue.svg" : "/images/figma/home-card-purple.svg",
-          metaClass: "text-[#cccccc]"
-        }))
-      : fallbackSessions;
 
   return (
     <div className="space-y-9 pb-4">
@@ -110,18 +111,38 @@ function HomePage() {
         <p className="text-base font-medium tracking-[-0.02em] text-[#0760fc]">Activité</p>
         <h2 className="mt-1 text-[24px] font-semibold tracking-[-0.02em] text-black">Tes prochaines séances</h2>
 
-        <div className="mt-4 flex gap-4 overflow-x-auto pb-2">
-          {sessions.map((session) => (
-            <article key={session.title} className={`relative w-[241px] shrink-0 overflow-hidden rounded-[20px] px-4 pb-6 pt-12 ${session.cardClass}`}>
-              <img src={session.deco} alt="" aria-hidden="true" className="pointer-events-none absolute -right-10 -top-12 h-[112px] w-[112px]" />
-              <h3 className="w-[152px] text-[18px] font-medium leading-[1.2] tracking-[-0.02em]">{session.title}</h3>
-              <p className={`mt-1 w-[151px] text-xs leading-[1.5] ${session.metaClass}`}>{session.subtitle}</p>
-              <span className={`absolute right-4 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full text-2xl text-white ${session.buttonClass}`}>
-                ↗
-              </span>
-            </article>
-          ))}
-        </div>
+        {loading ? <LoadingState /> : null}
+
+        {error ? <p className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</p> : null}
+
+        {!loading && !error && (events.length > 0 || !isSupabaseConfigured) ? (
+          <div className="mt-4 flex gap-4 overflow-x-auto pb-2">
+            {(events.length > 0
+              ? events.map((event, index) => ({
+                  title: event.title,
+                  subtitle: event.location,
+                  cardClass: index === 0 ? "bg-[#0760fc] text-white" : "bg-[#8a5df4] text-white",
+                  buttonClass: index === 0 ? "bg-[#3980fd]" : "bg-[#a17df6]",
+                  deco: index === 0 ? "/images/figma/home-card-blue.svg" : "/images/figma/home-card-purple.svg",
+                  metaClass: "text-[#cccccc]"
+                }))
+              : fallbackSessions
+            ).map((session) => (
+              <article key={session.title} className={`relative w-[241px] shrink-0 overflow-hidden rounded-[20px] px-4 pb-6 pt-12 ${session.cardClass}`}>
+                <img src={session.deco} alt="" aria-hidden="true" className="pointer-events-none absolute -right-10 -top-12 h-[112px] w-[112px]" />
+                <h3 className="w-[152px] text-[18px] font-medium leading-[1.2] tracking-[-0.02em]">{session.title}</h3>
+                <p className={`mt-1 w-[151px] text-xs leading-[1.5] ${session.metaClass}`}>{session.subtitle}</p>
+                <span className={`absolute right-4 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full text-2xl text-white ${session.buttonClass}`}>
+                  ↗
+                </span>
+              </article>
+            ))}
+          </div>
+        ) : null}
+
+        {!loading && !error && isSupabaseConfigured && events.length === 0 ? (
+          <p className="mt-4 rounded-2xl bg-[#ededf1] p-4 text-sm text-[#5c6069]">Aucune séance publiée pour le moment.</p>
+        ) : null}
       </section>
 
       <section className="space-y-6">

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import LoadingState from "../components/LoadingState";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { useDocumentMeta } from "../hooks/useDocumentMeta";
 import { fetchMyRegistrations } from "../services/registrations";
 import { EventRegistrationWithEvent } from "../types/domain";
@@ -12,6 +12,7 @@ function ProfilePage() {
   const { session, signOut } = useAuth();
   const [registrations, setRegistrations] = useState<EventRegistrationWithEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -26,6 +27,9 @@ function ProfilePage() {
         const data = await fetchMyRegistrations(session.user.id);
         if (!active) return;
         setRegistrations(data);
+      } catch (serviceError) {
+        if (!active) return;
+        setError((serviceError as Error).message);
       } finally {
         if (active) setLoading(false);
       }
@@ -87,13 +91,17 @@ function ProfilePage() {
           </div>
         ) : null}
 
-        {!loading && registrations.length === 0 ? (
+        {!loading && error ? (
+          <p className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</p>
+        ) : null}
+
+        {!loading && !error && registrations.length === 0 ? (
           <p className="mt-4 rounded-lg bg-white p-4 text-sm text-[#5c6069]">
             Aucune présence pour le moment. <Link to="/evenements" className="font-semibold text-brand-700">Voir le programme</Link>
           </p>
         ) : null}
 
-        {!loading ? (
+        {!loading && !error ? (
           <div className="mt-4 space-y-4">
             {registrations.slice(0, 4).map((registration) => (
               <article key={registration.id} className="rounded-lg bg-white p-4">

@@ -18,6 +18,7 @@ function AboutPage() {
 
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -32,6 +33,9 @@ function AboutPage() {
         const data = await fetchOrganizations();
         if (!active) return;
         setOrganizations(data);
+      } catch (serviceError) {
+        if (!active) return;
+        setError((serviceError as Error).message);
       } finally {
         if (active) setLoading(false);
       }
@@ -44,9 +48,7 @@ function AboutPage() {
     };
   }, []);
 
-  const list = organizations.length
-    ? organizations.map((org) => ({ name: org.name, city: org.description ?? "Île-de-France" }))
-    : fallbackPartners;
+  const list = organizations.map((org) => ({ name: org.name, city: org.description ?? "Île-de-France" }));
 
   return (
     <div className="space-y-5 pb-3">
@@ -59,17 +61,25 @@ function AboutPage() {
 
       {loading ? <LoadingState /> : null}
 
-      <section className="space-y-3">
-        {list.map((partner) => (
-          <article key={partner.name} className="flex items-start justify-between rounded-lg bg-[#fafafa] p-4">
-            <div>
-              <h2 className="max-w-[260px] text-base font-semibold uppercase tracking-[-0.02em] text-black">{partner.name}</h2>
-              <p className="mt-2 text-base text-[#474749]">{partner.city}</p>
-            </div>
-            <span className="text-[36px] leading-none text-[#232325]">+</span>
-          </article>
-        ))}
-      </section>
+      {error ? <p className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</p> : null}
+
+      {!loading && !error ? (
+        <section className="space-y-3">
+          {(list.length > 0 || !isSupabaseConfigured ? list : fallbackPartners).map((partner) => (
+            <article key={partner.name} className="flex items-start justify-between rounded-lg bg-[#fafafa] p-4">
+              <div>
+                <h2 className="max-w-[260px] text-base font-semibold uppercase tracking-[-0.02em] text-black">{partner.name}</h2>
+                <p className="mt-2 text-base text-[#474749]">{partner.city}</p>
+              </div>
+              <span className="text-[36px] leading-none text-[#232325]">+</span>
+            </article>
+          ))}
+        </section>
+      ) : null}
+
+      {!loading && !error && isSupabaseConfigured && list.length === 0 ? (
+        <p className="rounded-2xl bg-[#ededf1] p-4 text-sm text-[#5c6069]">Aucun partenaire trouvé dans Supabase.</p>
+      ) : null}
     </div>
   );
 }

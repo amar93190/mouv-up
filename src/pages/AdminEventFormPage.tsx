@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Container from "../components/Container";
 import LoadingState from "../components/LoadingState";
 import PageHeading from "../components/PageHeading";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { useDocumentMeta } from "../hooks/useDocumentMeta";
 import { createEvent, fetchAdminEventById, updateEvent } from "../services/events";
 import { fetchOrganizations } from "../services/organizations";

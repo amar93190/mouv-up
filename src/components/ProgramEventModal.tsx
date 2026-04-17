@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { fetchRegistrationByEvent, registerToEvent } from "../services/registrations";
 import { EventItem, EventRegistration } from "../types/domain";
 import { formatDateTime } from "../utils/date";

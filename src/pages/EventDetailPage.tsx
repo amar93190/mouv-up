@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import LoadingState from "../components/LoadingState";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { useDocumentMeta } from "../hooks/useDocumentMeta";
 import { isSupabaseConfigured } from "../lib/supabase";
 import { fetchPublicEventBySlug } from "../services/events";

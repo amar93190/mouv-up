@@ -1,29 +1,14 @@
 import { Session } from "@supabase/supabase-js";
 import {
-  createContext,
   ReactNode,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useState
 } from "react";
+import { AuthContext, AuthContextValue } from "./auth-context";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 import { Profile, UserRole } from "../types/domain";
-
-type AuthContextValue = {
-  session: Session | null;
-  profile: Profile | null;
-  role: UserRole;
-  loading: boolean;
-  isAuthenticated: boolean;
-  signIn: (email: string, password: string) => Promise<string | null>;
-  signUp: (email: string, password: string, fullName: string) => Promise<string | null>;
-  signOut: () => Promise<string | null>;
-  refreshProfile: () => Promise<void>;
-};
-
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 const PROFILE_SELECT = "id,full_name,role,organization_id,created_at";
 
@@ -117,11 +102,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     void initAuth();
 
-    const {
-      data: { subscription }
-    } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
-      setSession(nextSession);
-
+    async function syncSessionProfile(nextSession: Session | null) {
       if (!nextSession?.user.id) {
         setProfile(null);
         return;
@@ -135,6 +116,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
       } catch (_error) {
         setProfile(null);
       }
+    }
+
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      if (!active) return;
+      setSession(nextSession);
+      // Keep auth callback synchronous to avoid holding GoTrue storage lock
+      // while awaiting network requests (can trigger lock timeout warnings).
+      void syncSessionProfile(nextSession);
     });
 
     return () => {
@@ -203,12 +194,5 @@ export function AuthProvider({ children }: AuthProviderProps) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth() {
-  const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error("useAuth doit être utilisé dans AuthProvider.");
-  }
-
-  return context;
-}
+// Backward-compatible re-export for any stale HMR module still importing useAuth from this file.
+export { useAuth } from "../hooks/useAuth";
