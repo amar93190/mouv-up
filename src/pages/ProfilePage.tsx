@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import LoadingState from "../components/LoadingState";
+import PointsGauge from "../components/PointsGauge";
 import { useFestivalMode } from "../contexts/FestivalModeContext";
 import { useAuth } from "../hooks/useAuth";
 import { useDocumentMeta } from "../hooks/useDocumentMeta";
@@ -67,20 +68,29 @@ function ProfilePage() {
       </section>
 
       <section className={festivalMode ? "rounded-lg border border-[#1a3e98] bg-[#081b62] p-4" : "rounded-lg bg-[#fafafa] p-4"}>
-        <div className="mx-auto relative h-32 w-32">
-          <img src="/images/figma/ring-base.svg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full" />
-          <img src="/images/figma/ring-progress.svg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full" />
-          <img src="/images/figma/ring-inner.svg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full" />
-          <div className="absolute inset-0 flex flex-col items-center justify-center pb-1">
-            <span className={festivalMode ? "text-[32px] font-semibold leading-none tracking-[-0.02em] text-white" : "text-[32px] font-semibold leading-none tracking-[-0.02em]"}>{points}</span>
-            <span className={festivalMode ? "text-[23px] leading-none tracking-[-0.02em] text-[#c7d8ff]" : "text-[23px] leading-none tracking-[-0.02em] text-[#474749]"}>Pts</span>
-          </div>
+        <div className="mx-auto w-fit">
+          <PointsGauge
+            value={points}
+            max={200}
+            size={128}
+            thickness={14}
+            fillColor={festivalMode ? "#8db7ff" : "#1b61f3"}
+            trackColor={festivalMode ? "#2a488f" : "#e7e7e7"}
+            innerColor={festivalMode ? "#081b62" : "#fafafa"}
+            valueClassName={festivalMode ? "text-[32px] font-semibold leading-none tracking-[-0.02em] text-white" : "text-[32px] font-semibold leading-none tracking-[-0.02em] text-black"}
+            labelClassName={festivalMode ? "text-[23px] leading-none tracking-[-0.02em] text-[#c7d8ff]" : "text-[23px] leading-none tracking-[-0.02em] text-[#474749]"}
+          />
         </div>
 
         <p className={festivalMode ? "mt-4 text-center text-base font-semibold tracking-[-0.02em] text-white" : "mt-4 text-center text-base font-semibold tracking-[-0.02em] text-black"}>Encore 50 points avant le prochain palier</p>
       </section>
 
-      <button type="button" className="flex h-14 w-full items-center justify-center gap-2 rounded-[56px] bg-[#0760fc] text-base font-medium text-white">
+      <button
+        type="button"
+        className={festivalMode
+          ? "flex h-14 w-full items-center justify-center gap-2 rounded-[56px] bg-[#8db7ff] text-base font-semibold text-[#0b1d57]"
+          : "flex h-14 w-full items-center justify-center gap-2 rounded-[56px] bg-[#0760fc] text-base font-medium text-white"}
+      >
         Scanner le QR Code du Coach
         <QrIcon />
       </button>
@@ -100,8 +110,11 @@ function ProfilePage() {
         ) : null}
 
         {!loading && !error && registrations.length === 0 ? (
-          <p className="mt-4 rounded-lg bg-white p-4 text-sm text-[#5c6069]">
-            Aucune présence pour le moment. <Link to="/evenements" className="font-semibold text-brand-700">Voir le programme</Link>
+          <p className={festivalMode ? "mt-4 rounded-lg bg-[#0f2a81] p-4 text-sm text-[#d0dcff]" : "mt-4 rounded-lg bg-white p-4 text-sm text-[#5c6069]"}>
+            Aucune présence pour le moment.{" "}
+            <Link to="/evenements" className={festivalMode ? "font-semibold text-[#8db7ff]" : "font-semibold text-brand-700"}>
+              Voir le programme
+            </Link>
           </p>
         ) : null}
 

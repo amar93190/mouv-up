@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import LoadingState from "../components/LoadingState";
 import MatchingModal from "../components/MatchingModal";
+import PointsGauge from "../components/PointsGauge";
 import { useFestivalMode } from "../contexts/FestivalModeContext";
 import { useAuth } from "../hooks/useAuth";
 import { useDocumentMeta } from "../hooks/useDocumentMeta";
@@ -32,6 +33,25 @@ const fallbackSessions = [
     buttonClass: "bg-[#a17df6]",
     deco: "/images/figma/home-card-purple.svg",
     metaClass: "text-[#cccccc]"
+  }
+];
+
+const fallbackFestivalStands = [
+  {
+    title: "Tir à l'arc santé",
+    subtitle: "Stand 2 · Stand 2, allée loisirs découvertes, Handi Loisir",
+    cardClass: "bg-[#6ea8ff] text-[#0a1b54]",
+    buttonClass: "bg-[#0a1b54] text-white",
+    deco: "/images/figma/home-card-blue.svg",
+    metaClass: "text-[#284072]"
+  },
+  {
+    title: "Le Football sans pression",
+    subtitle: "Gymnase Caillaux, 75013 Paris",
+    cardClass: "bg-[#dcaef0] text-[#2b2145]",
+    buttonClass: "bg-[#2f2350] text-white",
+    deco: "/images/figma/home-card-purple.svg",
+    metaClass: "text-[#5c5176]"
   }
 ];
 
@@ -85,6 +105,17 @@ function HomePage() {
 
   const mode = useMemo(() => getHomeEventMode(mainEvents), [mainEvents]);
   const festivalButtonLabel = festivalMode ? "Retourner au mode quotidien" : "Passer en mode festival";
+  const festivalStandCards =
+    events.length > 0
+      ? events.slice(0, 2).map((event, index) => ({
+          title: event.title,
+          subtitle: event.location,
+          cardClass: index === 0 ? "bg-[#6ea8ff] text-[#0a1b54]" : "bg-[#dcaef0] text-[#2b2145]",
+          buttonClass: index === 0 ? "bg-[#0a1b54] text-white" : "bg-[#2f2350] text-white",
+          deco: index === 0 ? "/images/figma/home-card-blue.svg" : "/images/figma/home-card-purple.svg",
+          metaClass: index === 0 ? "text-[#284072]" : "text-[#5c5176]"
+        }))
+      : fallbackFestivalStands;
 
   return (
     <div className="space-y-9 pb-4">
@@ -121,50 +152,85 @@ function HomePage() {
         </button>
       </section>
 
-      <section className="space-y-4">
-        <button
-          type="button"
-          onClick={() => setIsMatchingOpen(true)}
-          className="flex h-14 w-full items-center justify-center gap-2 rounded-[56px] bg-[#0760fc] px-4 text-base font-medium text-white"
-        >
-          Trouver mon sport idéal
-          <SearchIcon />
-        </button>
-        <Link
-          to="/evenements"
-          className="flex h-14 items-center justify-center gap-2 rounded-[56px] border border-[#0760fc] bg-white px-4 text-base font-semibold text-[#232325]"
-        >
-          Voir le programme
-          <CalendarIcon />
-        </Link>
-      </section>
+      {festivalMode ? (
+        <section className="space-y-4">
+          <div>
+            <p className="text-sm font-medium text-[#b9cbff]">Le festival t&apos;attend</p>
+            <h2 className="mt-1 text-[36px] font-semibold leading-tight tracking-[-0.02em] text-white">
+              Découvre les stands et activités du jour
+            </h2>
+            <p className="mt-2 text-sm leading-[1.45] text-[#c8d7ff]">
+              Découvre les stands du jour, les initiations accessibles et les repères utiles pour profiter de Solimouv&apos;.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsMatchingOpen(true)}
+            className="flex h-14 w-full items-center justify-center gap-2 rounded-[56px] bg-[#8db7ff] px-4 text-base font-semibold text-[#0b1d57]"
+          >
+            Créer mon programme du jour
+            <SearchIcon />
+          </button>
+          <Link
+            to="/evenements"
+            className="flex h-14 items-center justify-center gap-2 rounded-[56px] border border-[#8db7ff] bg-transparent px-4 text-base font-semibold text-[#d5e1ff]"
+          >
+            Voir le programme
+            <CalendarIcon />
+          </Link>
+        </section>
+      ) : (
+        <section className="space-y-4">
+          <button
+            type="button"
+            onClick={() => setIsMatchingOpen(true)}
+            className="flex h-14 w-full items-center justify-center gap-2 rounded-[56px] bg-[#0760fc] px-4 text-base font-medium text-white"
+          >
+            Trouver mon sport idéal
+            <SearchIcon />
+          </button>
+          <Link
+            to="/evenements"
+            className="flex h-14 items-center justify-center gap-2 rounded-[56px] border border-[#0760fc] bg-white px-4 text-base font-semibold text-[#232325]"
+          >
+            Voir le programme
+            <CalendarIcon />
+          </Link>
+        </section>
+      )}
 
-      <section className="rounded-xl bg-[#fafafa] px-4 py-8">
-        <p className="text-base font-medium tracking-[-0.02em] text-[#0760fc]">Activité</p>
-        <h2 className="mt-1 text-[24px] font-semibold tracking-[-0.02em] text-black">Tes prochaines séances</h2>
+      <section className={festivalMode ? "rounded-xl border border-[#1a3e98] bg-[#081b62] px-4 py-8" : "rounded-xl bg-[#fafafa] px-4 py-8"}>
+        <p className={festivalMode ? "text-base font-medium tracking-[-0.02em] text-[#8db7ff]" : "text-base font-medium tracking-[-0.02em] text-[#0760fc]"}>
+          {festivalMode ? "Aujourd'hui" : "Activité"}
+        </p>
+        <h2 className={festivalMode ? "mt-1 text-[24px] font-semibold tracking-[-0.02em] text-white" : "mt-1 text-[24px] font-semibold tracking-[-0.02em] text-black"}>
+          {festivalMode ? "Ton stand du moment" : "Tes prochaines séances"}
+        </h2>
 
         {loading ? <LoadingState /> : null}
 
         {error ? <p className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</p> : null}
 
         {!loading && !error && (events.length > 0 || !isSupabaseConfigured) ? (
-          <div className="mt-4 flex gap-4 overflow-x-auto pb-2">
-            {(events.length > 0
-              ? events.map((event, index) => ({
-                  title: event.title,
-                  subtitle: event.location,
-                  cardClass: index === 0 ? "bg-[#0760fc] text-white" : "bg-[#8a5df4] text-white",
-                  buttonClass: index === 0 ? "bg-[#3980fd]" : "bg-[#a17df6]",
-                  deco: index === 0 ? "/images/figma/home-card-blue.svg" : "/images/figma/home-card-purple.svg",
-                  metaClass: "text-[#cccccc]"
-                }))
-              : fallbackSessions
+          <div className={festivalMode ? "mt-4 grid gap-3" : "mt-4 flex gap-4 overflow-x-auto pb-2"}>
+            {(festivalMode
+              ? festivalStandCards
+              : events.length > 0
+                ? events.map((event, index) => ({
+                    title: event.title,
+                    subtitle: event.location,
+                    cardClass: index === 0 ? "bg-[#0760fc] text-white" : "bg-[#8a5df4] text-white",
+                    buttonClass: "bg-[#3980fd] text-white",
+                    deco: index === 0 ? "/images/figma/home-card-blue.svg" : "/images/figma/home-card-purple.svg",
+                    metaClass: "text-[#cccccc]"
+                  }))
+                : fallbackSessions
             ).map((session) => (
-              <article key={session.title} className={`relative w-[241px] shrink-0 overflow-hidden rounded-[20px] px-4 pb-6 pt-12 ${session.cardClass}`}>
+              <article key={session.title} className={`relative overflow-hidden rounded-[20px] px-4 pb-6 pt-12 ${festivalMode ? "w-full" : "w-[241px] shrink-0"} ${session.cardClass}`}>
                 <img src={session.deco} alt="" aria-hidden="true" className="pointer-events-none absolute -right-10 -top-12 h-[112px] w-[112px]" />
                 <h3 className="w-[152px] text-[18px] font-medium leading-[1.2] tracking-[-0.02em]">{session.title}</h3>
                 <p className={`mt-1 w-[151px] text-xs leading-[1.5] ${session.metaClass}`}>{session.subtitle}</p>
-                <span className={`absolute right-4 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full text-2xl text-white ${session.buttonClass}`}>
+                <span className={`absolute right-4 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full text-2xl ${session.buttonClass}`}>
                   ↗
                 </span>
               </article>
@@ -179,30 +245,37 @@ function HomePage() {
 
       <section className="space-y-6">
         <div>
-          <p className="text-base font-medium tracking-[-0.02em] text-[#0760fc]">Mouv&apos;Pass</p>
-          <h2 className="mt-1 text-[24px] font-semibold tracking-[-0.02em] text-black">Ton élan du moment</h2>
+          <p className={festivalMode ? "text-base font-medium tracking-[-0.02em] text-[#8db7ff]" : "text-base font-medium tracking-[-0.02em] text-[#0760fc]"}>Mouv&apos;Pass</p>
+          <h2 className={festivalMode ? "mt-1 text-[24px] font-semibold tracking-[-0.02em] text-white" : "mt-1 text-[24px] font-semibold tracking-[-0.02em] text-black"}>Ton élan du moment</h2>
         </div>
 
-        <div className="flex items-center gap-4 rounded-lg bg-[#fafafa] p-4">
-          <div className="relative h-20 w-20 shrink-0">
-            <img src="/images/figma/ring-base.svg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full" />
-            <img src="/images/figma/ring-progress.svg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full" />
-            <img src="/images/figma/ring-inner.svg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full" />
-            <div className="absolute inset-0 flex flex-col items-center justify-center pb-1">
-              <span className="text-[20px] font-semibold leading-none tracking-[-0.02em]">150</span>
-              <span className="text-[14px] leading-none tracking-[-0.02em] text-[#474749]">Pts</span>
-            </div>
-          </div>
+        <div className={festivalMode ? "flex items-center gap-4 rounded-lg border border-[#1a3e98] bg-[#081b62] p-4" : "flex items-center gap-4 rounded-lg bg-[#fafafa] p-4"}>
+          <PointsGauge
+            value={150}
+            max={200}
+            size={80}
+            thickness={10}
+            fillColor={festivalMode ? "#8db7ff" : "#1b61f3"}
+            trackColor={festivalMode ? "#2a488f" : "#e7e7e7"}
+            innerColor={festivalMode ? "#081b62" : "#fafafa"}
+            valueClassName={festivalMode ? "text-[20px] font-semibold leading-none tracking-[-0.02em] text-white" : "text-[20px] font-semibold leading-none tracking-[-0.02em] text-black"}
+            labelClassName={festivalMode ? "text-[14px] leading-none tracking-[-0.02em] text-[#c7d8ff]" : "text-[14px] leading-none tracking-[-0.02em] text-[#474749]"}
+          />
 
           <div className="min-w-0">
-            <p className="text-base font-semibold leading-tight tracking-[-0.02em] text-black">Encore 50 points avant le prochain palier</p>
-            <p className="mt-2 text-base leading-tight tracking-[-0.02em] text-[#474749]">
+            <p className={festivalMode ? "text-base font-semibold leading-tight tracking-[-0.02em] text-white" : "text-base font-semibold leading-tight tracking-[-0.02em] text-black"}>Encore 50 points avant le prochain palier</p>
+            <p className={festivalMode ? "mt-2 text-base leading-tight tracking-[-0.02em] text-[#c7d8ff]" : "mt-2 text-base leading-tight tracking-[-0.02em] text-[#474749]"}>
               Chaque présence crée du lien et débloque un nouveau bonus solidaire
             </p>
           </div>
         </div>
 
-        <Link to={isAuthenticated ? "/profil" : "/connexion"} className="inline-flex rounded-full border border-[#cccccc] px-4 py-2 text-sm font-medium text-[#232325]">
+        <Link
+          to={isAuthenticated ? "/profil" : "/connexion"}
+          className={festivalMode
+            ? "inline-flex rounded-full border border-[#8db7ff] px-4 py-2 text-sm font-medium text-[#d5e1ff]"
+            : "inline-flex rounded-full border border-[#cccccc] px-4 py-2 text-sm font-medium text-[#232325]"}
+        >
           Voir mon pass
         </Link>
       </section>
