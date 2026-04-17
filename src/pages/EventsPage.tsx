@@ -54,9 +54,9 @@ function EventsPage() {
       : "#0760fc";
 
   return (
-    <div className="space-y-5 pb-3">
+    <div className="space-y-5 pb-3 md:space-y-6">
       <section>
-        <h1 className={festivalMode ? "text-[32px] font-semibold tracking-[-0.01em] text-white" : "text-[32px] font-semibold tracking-[-0.01em] text-black"}>
+        <h1 className={festivalMode ? "text-[32px] font-semibold tracking-[-0.01em] text-white md:text-[40px]" : "text-[32px] font-semibold tracking-[-0.01em] text-black md:text-[40px]"}>
           {festivalMode ? "Programme du Festival" : "Cette semaine"}
         </h1>
         <p className={festivalMode ? "mt-2 max-w-[340px] text-base text-[#cfdbff]" : "mt-2 max-w-[340px] text-base text-[#868688]"}>
@@ -64,7 +64,7 @@ function EventsPage() {
         </p>
       </section>
 
-      <section className="flex gap-2 overflow-x-auto pb-1">
+      <section className="flex gap-2 overflow-x-auto pb-1 md:flex-wrap md:overflow-visible">
         {filters.map((filter) => (
           <button
             key={filter}
@@ -89,7 +89,7 @@ function EventsPage() {
       ) : null}
 
       {!loading && !error && events.length > 0 ? (
-        <section className="space-y-3" aria-label="Liste des événements">
+        <section className="space-y-3 md:grid md:grid-cols-3 md:gap-5 md:space-y-0" aria-label="Liste des événements">
           {events.map((event, index) => (
             <EventCard
               key={event.id}

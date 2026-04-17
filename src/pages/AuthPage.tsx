@@ -50,15 +50,15 @@ function AuthPage() {
   }
 
   return (
-    <div className="space-y-5 pb-3">
-      <section>
-        <h1 className="text-6xl font-black leading-[0.9] text-[#0f1218]">Connexion</h1>
+    <div className="space-y-5 pb-3 md:grid md:grid-cols-12 md:gap-8 md:space-y-0">
+      <section className="md:col-span-5 md:pt-6">
+        <h1 className="text-6xl font-black leading-[0.9] text-[#0f1218] md:text-[74px]">Connexion</h1>
         <p className="mt-3 max-w-[340px] text-lg leading-snug text-[#7f828b]">
           Connecte-toi pour t'inscrire aux événements et accéder au Pass.
         </p>
       </section>
 
-      <section className="rounded-3xl bg-[#ededf1] p-4">
+      <section className="rounded-3xl bg-[#ededf1] p-4 md:col-span-7 md:p-8">
         {isAuthenticated ? (
           <p className="mb-3 rounded-2xl border border-green-200 bg-green-50 p-3 text-sm text-green-800">
             Tu es déjà connecté. <Link to="/profil" className="underline">Accéder au profil</Link>
@@ -82,7 +82,7 @@ function AuthPage() {
           </button>
         </div>
 
-        <form className="space-y-3" onSubmit={handleSubmit}>
+        <form className="space-y-3 md:space-y-4" onSubmit={handleSubmit}>
           {mode === "signup" ? (
             <div>
               <label htmlFor="full-name" className="mb-1 block text-sm font-medium text-[#161a20]">Nom complet</label>

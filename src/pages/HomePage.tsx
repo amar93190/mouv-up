@@ -122,9 +122,9 @@ function HomePage() {
       : fallbackFestivalStands;
 
   return (
-    <div className="space-y-9 pb-4">
-      <section className="space-y-2">
-        <h1 className={festivalMode ? "text-[32px] font-semibold tracking-[-0.01em] text-white" : "text-[32px] font-semibold tracking-[-0.01em] text-black"}>
+    <div className="space-y-9 pb-4 md:space-y-10 md:pb-1 md:grid md:grid-cols-12 md:gap-6">
+      <section className="space-y-2 md:col-span-12">
+        <h1 className={festivalMode ? "text-[32px] font-semibold tracking-[-0.01em] text-white md:text-[42px]" : "text-[32px] font-semibold tracking-[-0.01em] text-black md:text-[42px]"}>
           Bienvenue, {profile?.full_name?.split(" ")[0] ?? "Aminata"} <span aria-hidden="true">👋🏼</span>
         </h1>
         <p className={festivalMode ? "max-w-[352px] text-base text-[#cfdbff]" : "max-w-[352px] text-base text-[#868688]"}>
@@ -136,7 +136,7 @@ function HomePage() {
         {mode.type === "active" ? <p className={festivalMode ? "text-sm font-medium text-[#c3d4ff]" : "text-sm font-medium text-[#4f4f52]"}>Événement principal en cours</p> : null}
       </section>
 
-      <section className="relative overflow-hidden rounded-[20px] bg-[#dcaef0] px-4 pb-5 pt-7">
+      <section className="relative overflow-hidden rounded-[20px] bg-[#dcaef0] px-4 pb-5 pt-7 md:col-span-5 md:px-7 md:pb-7 md:pt-9">
         <span className="pointer-events-none absolute -right-8 -top-8 h-20 w-20 rounded-full border-[10px] border-[#c98ce6]" aria-hidden="true" />
         <h2 className="max-w-[220px] text-[33px] font-semibold leading-tight tracking-[-0.02em] text-[#14162f]">
           Le Festival Solimouv&apos; c&apos;est aujourd&apos;hui !
@@ -157,7 +157,7 @@ function HomePage() {
       </section>
 
       {festivalMode ? (
-        <section className="space-y-4">
+        <section className="space-y-4 md:col-span-7">
           <div>
             <p className="text-sm font-medium text-[#b9cbff]">Le festival t&apos;attend</p>
             <h2 className="mt-1 text-[36px] font-semibold leading-tight tracking-[-0.02em] text-white">
@@ -184,7 +184,7 @@ function HomePage() {
           </Link>
         </section>
       ) : (
-        <section className="space-y-4">
+        <section className="space-y-4 md:col-span-7">
           <button
             type="button"
             onClick={() => setIsMatchingOpen(true)}
@@ -203,7 +203,7 @@ function HomePage() {
         </section>
       )}
 
-      <section className={festivalMode ? "rounded-xl border border-[#1a3e98] bg-[#081b62] px-4 py-8" : "rounded-xl bg-[#fafafa] px-4 py-8"}>
+      <section className={festivalMode ? "rounded-xl border border-[#1a3e98] bg-[#081b62] px-4 py-8 md:col-span-8 md:px-7 md:py-9" : "rounded-xl bg-[#fafafa] px-4 py-8 md:col-span-8 md:px-7 md:py-9"}>
         <p className={festivalMode ? "text-base font-medium tracking-[-0.02em] text-[#8db7ff]" : "text-base font-medium tracking-[-0.02em] text-[#0760fc]"}>
           {festivalMode ? "Aujourd'hui" : "Activité"}
         </p>
@@ -216,7 +216,7 @@ function HomePage() {
         {error ? <p className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</p> : null}
 
         {!loading && !error && (events.length > 0 || !isSupabaseConfigured) ? (
-          <div className={festivalMode ? "mt-4 grid gap-3" : "mt-4 flex gap-4 overflow-x-auto pb-2"}>
+          <div className={festivalMode ? "mt-4 grid gap-3" : "mt-4 flex gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:overflow-visible"}>
             {(festivalMode
               ? festivalStandCards
               : events.length > 0
@@ -230,7 +230,7 @@ function HomePage() {
                   }))
                 : fallbackSessions
             ).map((session) => (
-              <article key={session.title} className={`relative overflow-hidden rounded-[20px] px-4 pb-6 pt-12 ${festivalMode ? "w-full" : "w-[241px] shrink-0"} ${session.cardClass}`}>
+              <article key={session.title} className={`relative overflow-hidden rounded-[20px] px-4 pb-6 pt-12 ${festivalMode ? "w-full" : "w-[241px] shrink-0 md:w-full"} ${session.cardClass}`}>
                 <img src={session.deco} alt="" aria-hidden="true" className="pointer-events-none absolute -right-10 -top-12 h-[112px] w-[112px]" />
                 <h3 className="w-[152px] text-[18px] font-medium leading-[1.2] tracking-[-0.02em]">{session.title}</h3>
                 <p className={`mt-1 w-[151px] text-xs leading-[1.5] ${session.metaClass}`}>{session.subtitle}</p>
@@ -247,7 +247,7 @@ function HomePage() {
         ) : null}
       </section>
 
-      <section className="space-y-6">
+      <section className="space-y-6 md:col-span-4 md:self-start">
         <div>
           <p className={festivalMode ? "text-base font-medium tracking-[-0.02em] text-[#8db7ff]" : "text-base font-medium tracking-[-0.02em] text-[#0760fc]"}>Mouv&apos;Pass</p>
           <h2 className={festivalMode ? "mt-1 text-[24px] font-semibold tracking-[-0.02em] text-white" : "mt-1 text-[24px] font-semibold tracking-[-0.02em] text-black"}>Ton élan du moment</h2>

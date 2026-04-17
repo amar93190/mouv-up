@@ -14,9 +14,8 @@ function Footer() {
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-5">
         <p className={festivalMode ? "text-sm text-[#d2dcff]" : "text-sm text-slate-600"}>Solimouv’ · Up Sport! · Plateforme inclusive</p>
         <div className={festivalMode ? "flex items-center gap-3 text-sm text-[#d2dcff]" : "flex items-center gap-3 text-sm text-slate-600"}>
-          <Link to="/a-propos" className={festivalMode ? "hover:text-white" : "hover:text-slate-900"}>À propos</Link>
-          <Link to="/evenements" className={festivalMode ? "hover:text-white" : "hover:text-slate-900"}>Événements</Link>
-          <Link to="/contact" className={festivalMode ? "hover:text-white" : "hover:text-slate-900"}>Contact</Link>
+          <Link to="/mentions-legales" className={festivalMode ? "hover:text-white" : "hover:text-slate-900"}>Mentions légales</Link>
+          <Link to="/rgpd" className={festivalMode ? "hover:text-white" : "hover:text-slate-900"}>RGPD</Link>
         </div>
       </div>
     </footer>

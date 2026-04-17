@@ -98,7 +98,7 @@ function ProgramEventModal({ event, accentColor = "#0760fc", onClose }: ProgramE
     <div className="fixed inset-0 z-[1000] bg-black/60 backdrop-blur-[2px]" role="dialog" aria-modal="true" aria-label={`Détails ${selectedEvent.title}`}>
       <button type="button" aria-label="Fermer" onClick={onClose} className="absolute inset-0 h-full w-full cursor-default" />
 
-      <div className="absolute bottom-0 left-1/2 w-full max-w-[390px] -translate-x-1/2 rounded-t-[14px] bg-white p-4 shadow-[0_-10px_50px_rgba(0,0,0,0.35)]">
+      <div className="absolute bottom-0 left-1/2 w-full max-w-[390px] -translate-x-1/2 rounded-t-[14px] bg-white p-4 shadow-[0_-10px_50px_rgba(0,0,0,0.35)] md:bottom-auto md:top-1/2 md:max-w-[720px] md:-translate-y-1/2 md:rounded-2xl md:p-7 md:shadow-[0_30px_80px_rgba(0,0,0,0.45)]">
         <div className="mx-auto mb-3 h-1 w-20 rounded-full bg-[#ececf1]" />
 
         <p className="text-base font-medium tracking-[-0.02em] text-[#3f7dff]">À propos de l&apos;activité</p>

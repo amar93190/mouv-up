@@ -10,9 +10,11 @@ import ContactPage from "../pages/ContactPage";
 import EventDetailPage from "../pages/EventDetailPage";
 import EventsPage from "../pages/EventsPage";
 import HomePage from "../pages/HomePage";
+import LegalNoticePage from "../pages/LegalNoticePage";
 import MemberContentPage from "../pages/MemberContentPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ProfilePage from "../pages/ProfilePage";
+import RgpdPage from "../pages/RgpdPage";
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +26,8 @@ export const router = createBrowserRouter([
       { path: "evenements", element: <EventsPage /> },
       { path: "evenements/:slug", element: <EventDetailPage /> },
       { path: "contact", element: <ContactPage /> },
+      { path: "mentions-legales", element: <LegalNoticePage /> },
+      { path: "rgpd", element: <RgpdPage /> },
       { path: "connexion", element: <AuthPage /> },
       {
         path: "profil",

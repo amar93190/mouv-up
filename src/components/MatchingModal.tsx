@@ -129,7 +129,7 @@ function MatchingModal({ isOpen, availableEvents, onClose, onOpenEvent }: Matchi
         onClick={onClose}
         className="absolute inset-0 h-full w-full cursor-default"
       />
-      <div className="absolute left-1/2 top-1/2 w-[calc(100%-1rem)] max-w-[390px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl bg-white shadow-[0_30px_80px_rgba(0,0,0,0.45)]">
+      <div className="absolute left-1/2 top-1/2 w-[calc(100%-1rem)] max-w-[390px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl bg-white shadow-[0_30px_80px_rgba(0,0,0,0.45)] md:max-w-[720px]">
         <div className="flex items-center justify-between border-b border-[#ececf1] px-4 py-3">
           <p className="text-sm font-semibold text-[#232325]">Trouve ton sport</p>
           <button type="button" onClick={onClose} className="rounded-full bg-[#f0f0f3] px-2.5 py-1 text-sm font-semibold text-[#4f4f52]">

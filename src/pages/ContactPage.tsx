@@ -12,16 +12,16 @@ function ContactPage() {
   }
 
   return (
-    <div className="space-y-5 pb-3">
-      <section>
-        <h1 className="text-6xl font-black leading-[0.9] text-[#0f1218]">Contact</h1>
+    <div className="space-y-5 pb-3 md:grid md:grid-cols-12 md:gap-8 md:space-y-0">
+      <section className="md:col-span-5 md:pt-6">
+        <h1 className="text-6xl font-black leading-[0.9] text-[#0f1218] md:text-[74px]">Contact</h1>
         <p className="mt-3 max-w-[340px] text-lg leading-snug text-[#7f828b]">
           Une question sur un événement ou une demande de partenariat ? Écris-nous.
         </p>
       </section>
 
-      <section className="rounded-3xl bg-[#ededf1] p-4">
-        <form className="space-y-3" onSubmit={handleSubmit}>
+      <section className="rounded-3xl bg-[#ededf1] p-4 md:col-span-7 md:p-8">
+        <form className="space-y-3 md:space-y-4" onSubmit={handleSubmit}>
           <label className="block text-sm font-semibold text-[#171a20]" htmlFor="name">Nom</label>
           <input id="name" required className="h-12 w-full rounded-2xl border border-[#d2d5dc] bg-white px-4 text-sm" />
 

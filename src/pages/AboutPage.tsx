@@ -53,9 +53,9 @@ function AboutPage() {
   const list = organizations.map((org) => ({ name: org.name, city: org.description ?? "Île-de-France" }));
 
   return (
-    <div className="space-y-5 pb-3">
+    <div className="space-y-5 pb-3 md:space-y-6">
       <section>
-        <h1 className={festivalMode ? "text-[32px] font-semibold tracking-[-0.01em] text-white" : "text-[32px] font-semibold tracking-[-0.01em] text-black"}>
+        <h1 className={festivalMode ? "text-[32px] font-semibold tracking-[-0.01em] text-white md:text-[40px]" : "text-[32px] font-semibold tracking-[-0.01em] text-black md:text-[40px]"}>
           {festivalMode ? "Les équipes sur place" : "Nos partenaires"}
         </h1>
         <p className={festivalMode ? "mt-2 max-w-[352px] text-base text-[#cfdbff]" : "mt-2 max-w-[352px] text-base text-[#868688]"}>
@@ -68,7 +68,7 @@ function AboutPage() {
       {error ? <p className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</p> : null}
 
       {!loading && !error ? (
-        <section className="space-y-3">
+        <section className="space-y-3 md:grid md:grid-cols-3 md:gap-5 md:space-y-0">
           {(list.length > 0 || !isSupabaseConfigured ? list : fallbackPartners).map((partner) => (
             <article
               key={partner.name}

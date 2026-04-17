@@ -102,7 +102,7 @@ function EventCard({ event, index = 0, onOpen, showIllustration = true }: EventC
 
   return (
     <article
-      className={`relative min-h-[166px] overflow-hidden rounded-[20px] px-4 pb-6 pt-8 ${color.card} ${onOpen ? "cursor-pointer" : ""}`}
+      className={`relative min-h-[166px] overflow-hidden rounded-[20px] px-4 pb-6 pt-8 md:min-h-[210px] md:px-5 md:pt-9 ${color.card} ${onOpen ? "cursor-pointer" : ""}`}
       onClick={onOpen ? () => onOpen(event) : undefined}
     >
       <img src={color.deco} alt="" aria-hidden="true" className="pointer-events-none absolute -right-10 -top-12 h-[112px] w-[112px]" />
@@ -118,8 +118,8 @@ function EventCard({ event, index = 0, onOpen, showIllustration = true }: EventC
         </div>
       ) : null}
 
-      <h2 className="relative z-[3] max-w-[190px] text-[18px] font-medium leading-[1.2] tracking-[-0.01em]">{event.title}</h2>
-      <p className={`relative z-[3] mt-1.5 max-w-[200px] text-xs leading-[1.5] ${color.meta}`}>{event.location}</p>
+      <h2 className="relative z-[3] max-w-[190px] text-[18px] font-medium leading-[1.2] tracking-[-0.01em] md:max-w-[240px] md:text-[22px]">{event.title}</h2>
+      <p className={`relative z-[3] mt-1.5 max-w-[200px] text-xs leading-[1.5] md:max-w-[260px] md:text-sm ${color.meta}`}>{event.location}</p>
 
       {onOpen ? (
         <button

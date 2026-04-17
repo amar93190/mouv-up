@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://solimouv.local/schemas/welcome-registration.payload.schema.json",
+  "title": "Welcome Registration Webhook Payload",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "user_id",
+    "event_id",
+    "registration_id",
+    "registration_status",
+    "event_title",
+    "event_slug",
+    "event_start_date",
+    "event_end_date",
+    "event_location",
+    "source",
+    "sent_at"
+  ],
+  "properties": {
+    "user_id": { "type": "string", "format": "uuid" },
+    "event_id": { "type": "string", "format": "uuid" },
+    "registration_id": { "type": "string", "format": "uuid" },
+    "registration_status": {
+      "type": "string",
+      "enum": ["registered", "waitlist", "cancelled"]
+    },
+    "event_title": { "type": "string", "minLength": 1 },
+    "event_slug": { "type": "string", "minLength": 1 },
+    "event_start_date": { "type": "string", "format": "date-time" },
+    "event_end_date": { "type": "string", "format": "date-time" },
+    "event_location": { "type": "string", "minLength": 1 },
+    "source": {
+      "type": "string",
+      "enum": ["event-detail", "program-modal"]
+    },
+    "sent_at": { "type": "string", "format": "date-time" }
+  }
+}

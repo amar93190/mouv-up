@@ -11,7 +11,7 @@ import { EventRegistrationWithEvent } from "../types/domain";
 function ProfilePage() {
   useDocumentMeta("Pass", "Ton pass solidaire avec points et historique des présences récentes.");
 
-  const { session, signOut } = useAuth();
+  const { session, profile, signOut } = useAuth();
   const { festivalMode } = useFestivalMode();
   const [registrations, setRegistrations] = useState<EventRegistrationWithEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -46,11 +46,40 @@ function ProfilePage() {
   }, [session?.user.id]);
 
   const points = useMemo(() => 100 + registrations.length * 25, [registrations.length]);
+  const fullName = profile?.full_name?.trim() || null;
+  const displayName = fullName ?? session?.user.email ?? "Utilisateur";
+  const initials = useMemo(() => {
+    if (fullName) {
+      const parts = fullName.split(/\s+/).filter(Boolean);
+      const first = parts[0]?.[0] ?? "";
+      const second = parts[1]?.[0] ?? "";
+      return `${first}${second}`.toUpperCase() || "U";
+    }
+    const emailInitial = session?.user.email?.[0] ?? "U";
+    return emailInitial.toUpperCase();
+  }, [fullName, session?.user.email]);
 
   return (
-    <div className="space-y-6 pb-3">
-      <section>
-        <h1 className={festivalMode ? "text-[32px] font-semibold tracking-[-0.01em] text-white" : "text-[32px] font-semibold tracking-[-0.01em] text-black"}>Points solidaires</h1>
+    <div className="space-y-6 pb-3 md:grid md:grid-cols-12 md:gap-6 md:space-y-0">
+      <section className="md:col-span-12">
+        <div className="mb-4 flex items-center gap-3">
+          <div
+            className={festivalMode
+              ? "inline-flex h-14 w-14 items-center justify-center rounded-full border border-[#33529f] bg-[#0a1f69] text-base font-semibold text-[#d7e3ff]"
+              : "inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#d1d5db] text-base font-semibold text-[#374151]"}
+            aria-label="Photo de profil"
+          >
+            {initials}
+          </div>
+          <div>
+            <p className={festivalMode ? "text-sm text-[#c7d8ff]" : "text-sm text-[#6b7280]"}>Profil</p>
+            <p className={festivalMode ? "text-lg font-semibold text-white" : "text-lg font-semibold text-[#111827]"}>
+              {displayName}
+            </p>
+          </div>
+        </div>
+
+        <h1 className={festivalMode ? "text-[32px] font-semibold tracking-[-0.01em] text-white md:text-[40px]" : "text-[32px] font-semibold tracking-[-0.01em] text-black md:text-[40px]"}>Points solidaires</h1>
         <p className={festivalMode ? "mt-2 max-w-[352px] text-base text-[#cfdbff]" : "mt-2 max-w-[352px] text-base text-[#868688]"}>
           Chaque séance validée fait monter ton compteur et renforce ton parcours.
         </p>
@@ -67,7 +96,7 @@ function ProfilePage() {
         </div>
       </section>
 
-      <section className={festivalMode ? "rounded-lg border border-[#1a3e98] bg-[#081b62] p-4" : "rounded-lg bg-[#fafafa] p-4"}>
+      <section className={festivalMode ? "rounded-lg border border-[#1a3e98] bg-[#081b62] p-4 md:col-span-4 md:p-6" : "rounded-lg bg-[#fafafa] p-4 md:col-span-4 md:p-6"}>
         <div className="mx-auto w-fit">
           <PointsGauge
             value={points}
@@ -88,14 +117,14 @@ function ProfilePage() {
       <button
         type="button"
         className={festivalMode
-          ? "flex h-14 w-full items-center justify-center gap-2 rounded-[56px] bg-[#8db7ff] text-base font-semibold text-[#0b1d57]"
-          : "flex h-14 w-full items-center justify-center gap-2 rounded-[56px] bg-[#0760fc] text-base font-medium text-white"}
+          ? "flex h-14 w-full items-center justify-center gap-2 rounded-[56px] bg-[#8db7ff] text-base font-semibold text-[#0b1d57] md:col-span-8 md:h-full md:min-h-[184px]"
+          : "flex h-14 w-full items-center justify-center gap-2 rounded-[56px] bg-[#0760fc] text-base font-medium text-white md:col-span-8 md:h-full md:min-h-[184px]"}
       >
         Scanner le QR Code du Coach
         <QrIcon />
       </button>
 
-      <section className={festivalMode ? "rounded-xl border border-[#1a3e98] bg-[#081b62] px-4 py-8" : "rounded-xl bg-[#fafafa] px-4 py-8"}>
+      <section className={festivalMode ? "rounded-xl border border-[#1a3e98] bg-[#081b62] px-4 py-8 md:col-span-12 md:px-6" : "rounded-xl bg-[#fafafa] px-4 py-8 md:col-span-12 md:px-6"}>
         <p className="text-base font-medium tracking-[-0.02em] text-[#0760fc]">Historique</p>
         <h2 className={festivalMode ? "mt-1 text-[24px] font-semibold tracking-[-0.02em] text-white" : "mt-1 text-[24px] font-semibold tracking-[-0.02em] text-black"}>Présences récentes</h2>
 

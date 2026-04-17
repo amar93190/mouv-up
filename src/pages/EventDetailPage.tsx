@@ -112,8 +112,8 @@ function EventDetailPage() {
   }
 
   return (
-    <div className="space-y-4 pb-3">
-      <section className="rounded-3xl bg-[#ededf1] p-4">
+    <div className="space-y-4 pb-3 md:space-y-0 md:grid md:grid-cols-12 md:gap-4">
+      <section className="rounded-3xl bg-[#ededf1] p-4 md:col-span-8 md:p-6">
         <h1 className="text-4xl font-black leading-tight text-[#0f1218]">{event.title}</h1>
         <p className="mt-2 text-sm text-[#59606a]">{event.short_description}</p>
 
@@ -135,7 +135,7 @@ function EventDetailPage() {
         <p className="mt-4 whitespace-pre-line text-sm leading-6 text-[#2f3440]">{event.long_description}</p>
       </section>
 
-      <section className="rounded-3xl bg-[#ededf1] p-4">
+      <section className="rounded-3xl bg-[#ededf1] p-4 md:col-span-4 md:p-6 md:h-fit">
         <h2 className="text-xl font-bold text-[#151920]">Inscription</h2>
 
         {!isAuthenticated ? (
@@ -171,7 +171,7 @@ function EventDetailPage() {
         )}
       </section>
 
-      {error ? <p className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</p> : null}
+      {error ? <p className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 md:col-span-12">{error}</p> : null}
     </div>
   );
 }
