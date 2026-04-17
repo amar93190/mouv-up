@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
 import EventCard from "../components/EventCard";
 import LoadingState from "../components/LoadingState";
+import ProgramEventModal from "../components/ProgramEventModal";
 import { useDocumentMeta } from "../hooks/useDocumentMeta";
 import { isSupabaseConfigured } from "../lib/supabase";
 import { fetchPublicEvents } from "../services/events";
 import { EventItem } from "../types/domain";
 
 const filters = ["PMR", "Débutant", "Femmes", "Gratuit"];
+const cardAccentColors = ["#0760fc", "#8658f4", "#39e397", "#f8ef74"];
 
 function EventsPage() {
   useDocumentMeta("Programme", "Filtre les séances et découvre les événements publiés par les organisateurs Solimouv’.");
 
   const [events, setEvents] = useState<EventItem[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,6 +45,11 @@ function EventsPage() {
       active = false;
     };
   }, []);
+
+  const selectedEventAccent =
+    selectedEvent && events.length > 0
+      ? cardAccentColors[Math.max(events.findIndex((item) => item.id === selectedEvent.id), 0) % cardAccentColors.length]
+      : "#0760fc";
 
   return (
     <div className="space-y-5 pb-3">
@@ -75,10 +83,12 @@ function EventsPage() {
       {!loading && !error && events.length > 0 ? (
         <section className="space-y-3" aria-label="Liste des événements">
           {events.map((event, index) => (
-            <EventCard key={event.id} event={event} index={index} />
+            <EventCard key={event.id} event={event} index={index} onOpen={setSelectedEvent} />
           ))}
         </section>
       ) : null}
+
+      <ProgramEventModal event={selectedEvent} accentColor={selectedEventAccent} onClose={() => setSelectedEvent(null)} />
     </div>
   );
 }
