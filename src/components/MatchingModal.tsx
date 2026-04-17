@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { EventItem } from "../types/domain";
 
@@ -22,15 +23,20 @@ function MatchingModal({ isOpen, availableEvents, onClose, onOpenEvent }: Matchi
       setStep(1);
       setEnergy(null);
       setGroup(null);
+      document.body.style.overflow = "";
       return;
     }
+    document.body.style.overflow = "hidden";
 
     function onEsc(event: KeyboardEvent) {
       if (event.key === "Escape") onClose();
     }
 
     window.addEventListener("keydown", onEsc);
-    return () => window.removeEventListener("keydown", onEsc);
+    return () => {
+      window.removeEventListener("keydown", onEsc);
+      document.body.style.overflow = "";
+    };
   }, [isOpen, onClose]);
 
   const result = useMemo(() => {
@@ -113,11 +119,17 @@ function MatchingModal({ isOpen, availableEvents, onClose, onOpenEvent }: Matchi
     };
   }, [availableEvents, energy, group]);
 
-  if (!isOpen) return null;
+  if (!isOpen || typeof document === "undefined") return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-2 sm:items-center" role="dialog" aria-modal="true" aria-label="Matching sportif">
-      <div className="w-full max-w-[390px] overflow-hidden rounded-2xl bg-white shadow-2xl">
+  return createPortal(
+    <div className="fixed inset-0 z-[1000] bg-black/60 backdrop-blur-[2px]" role="dialog" aria-modal="true" aria-label="Matching sportif">
+      <button
+        type="button"
+        aria-label="Fermer"
+        onClick={onClose}
+        className="absolute inset-0 h-full w-full cursor-default"
+      />
+      <div className="absolute left-1/2 top-1/2 w-[calc(100%-1rem)] max-w-[390px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl bg-white shadow-[0_30px_80px_rgba(0,0,0,0.45)]">
         <div className="flex items-center justify-between border-b border-[#ececf1] px-4 py-3">
           <p className="text-sm font-semibold text-[#232325]">Trouve ton sport</p>
           <button type="button" onClick={onClose} className="rounded-full bg-[#f0f0f3] px-2.5 py-1 text-sm font-semibold text-[#4f4f52]">
@@ -226,7 +238,8 @@ function MatchingModal({ isOpen, availableEvents, onClose, onOpenEvent }: Matchi
           ) : null}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

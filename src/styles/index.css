@@ -42,19 +42,29 @@
 
 @layer components {
   .route-transition {
-    animation: route-fade-slide 460ms cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: opacity, transform;
+    animation: route-fade-slide 520ms cubic-bezier(0.2, 0.85, 0.28, 1) both;
+    transform-origin: 50% 8%;
+    will-change: opacity, transform, filter;
+    backface-visibility: hidden;
   }
 
   @keyframes route-fade-slide {
     from {
       opacity: 0;
-      transform: translateY(12px);
+      transform: translate3d(0, 14px, 0) scale(0.992);
+      filter: blur(6px);
+    }
+
+    70% {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+      filter: blur(0);
     }
 
     to {
       opacity: 1;
-      transform: translateY(0);
+      transform: translate3d(0, 0, 0) scale(1);
+      filter: blur(0);
     }
   }
 }

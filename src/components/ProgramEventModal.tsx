@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { fetchRegistrationByEvent, registerToEvent } from "../services/registrations";
@@ -64,7 +65,7 @@ function ProgramEventModal({ event, accentColor = "#0760fc", onClose }: ProgramE
     };
   }, [event, isAuthenticated, session?.user.id]);
 
-  if (!event) return null;
+  if (!event || typeof document === "undefined") return null;
   const selectedEvent = event;
 
   async function handleRegister() {
@@ -86,11 +87,11 @@ function ProgramEventModal({ event, accentColor = "#0760fc", onClose }: ProgramE
 
   const alreadyRegistered = registration?.registration_status === "registered";
 
-  return (
-    <div className="fixed inset-0 z-50 bg-black/50" role="dialog" aria-modal="true" aria-label={`Détails ${selectedEvent.title}`}>
+  return createPortal(
+    <div className="fixed inset-0 z-[1000] bg-black/60 backdrop-blur-[2px]" role="dialog" aria-modal="true" aria-label={`Détails ${selectedEvent.title}`}>
       <button type="button" aria-label="Fermer" onClick={onClose} className="absolute inset-0 h-full w-full cursor-default" />
 
-      <div className="absolute bottom-0 left-1/2 w-full max-w-[390px] -translate-x-1/2 rounded-t-[14px] bg-white p-4 shadow-2xl">
+      <div className="absolute bottom-0 left-1/2 w-full max-w-[390px] -translate-x-1/2 rounded-t-[14px] bg-white p-4 shadow-[0_-10px_50px_rgba(0,0,0,0.35)]">
         <div className="mx-auto mb-3 h-1 w-20 rounded-full bg-[#ececf1]" />
 
         <p className="text-base font-medium tracking-[-0.02em] text-[#3f7dff]">À propos de l&apos;activité</p>
@@ -135,7 +136,8 @@ function ProgramEventModal({ event, accentColor = "#0760fc", onClose }: ProgramE
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

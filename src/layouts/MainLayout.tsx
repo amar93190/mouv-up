@@ -11,7 +11,8 @@ function MainLayout() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith("/admin");
   const { festivalMode } = useFestivalMode();
-  const routeTransitionKey = `${location.pathname}${location.search}${location.hash}`;
+  // Animate only real page changes to avoid unnecessary replays on hash/search updates.
+  const routeTransitionKey = location.pathname;
 
   return (
     <div className={festivalMode ? "min-h-screen bg-[#050f4b] text-[#f3f5ff]" : "min-h-screen bg-[#ececf0] text-[#13161d] md:bg-[#f4f4f8]"}>
