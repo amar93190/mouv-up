@@ -3,7 +3,7 @@ import LoadingState from "../components/LoadingState";
 import { useFestivalMode } from "../contexts/FestivalModeContext";
 import { useDocumentMeta } from "../hooks/useDocumentMeta";
 import { isSupabaseConfigured } from "../lib/supabase";
-import { fetchOrganizations } from "../services/organizations";
+import { fetchFestivalOrganizations, fetchOrganizations } from "../services/organizations";
 import { Organization } from "../types/domain";
 
 const fallbackPartners = [
@@ -32,7 +32,7 @@ function AboutPage() {
       }
 
       try {
-        const data = await fetchOrganizations();
+        const data = festivalMode ? await fetchFestivalOrganizations() : await fetchOrganizations();
         if (!active) return;
         setOrganizations(data);
       } catch (serviceError) {
@@ -48,7 +48,7 @@ function AboutPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [festivalMode]);
 
   const list = organizations.map((org) => ({ name: org.name, city: org.description ?? "Île-de-France" }));
 
@@ -87,7 +87,9 @@ function AboutPage() {
       ) : null}
 
       {!loading && !error && isSupabaseConfigured && list.length === 0 ? (
-        <p className="rounded-2xl bg-[#ededf1] p-4 text-sm text-[#5c6069]">Aucun partenaire trouvé dans Supabase.</p>
+        <p className="rounded-2xl bg-[#ededf1] p-4 text-sm text-[#5c6069]">
+          {festivalMode ? "Aucune équipe festival trouvée dans Supabase." : "Aucun partenaire trouvé dans Supabase."}
+        </p>
       ) : null}
     </div>
   );

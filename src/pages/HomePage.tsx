@@ -6,7 +6,12 @@ import { useFestivalMode } from "../contexts/FestivalModeContext";
 import { useAuth } from "../hooks/useAuth";
 import { useDocumentMeta } from "../hooks/useDocumentMeta";
 import { isSupabaseConfigured } from "../lib/supabase";
-import { fetchPublicEvents, fetchPublicMainEvents } from "../services/events";
+import {
+  fetchPublicEvents,
+  fetchPublicFestivalEvents,
+  fetchPublicFestivalMainEvents,
+  fetchPublicMainEvents
+} from "../services/events";
 import { EventItem } from "../types/domain";
 import { buildCountdownLabel } from "../utils/date";
 import { getHomeEventMode } from "../utils/eventMode";
@@ -54,7 +59,11 @@ function HomePage() {
       }
 
       try {
-        const [mainEventData, eventData] = await Promise.all([fetchPublicMainEvents(), fetchPublicEvents()]);
+        const [mainEventData, eventData] = await Promise.all(
+          festivalMode
+            ? [fetchPublicFestivalMainEvents(), fetchPublicFestivalEvents()]
+            : [fetchPublicMainEvents(), fetchPublicEvents()]
+        );
         if (!active) return;
 
         setMainEvents(mainEventData);
@@ -72,7 +81,7 @@ function HomePage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [festivalMode]);
 
   const mode = useMemo(() => getHomeEventMode(mainEvents), [mainEvents]);
   const festivalButtonLabel = festivalMode ? "Retourner au mode quotidien" : "Passer en mode festival";

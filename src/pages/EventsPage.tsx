@@ -5,7 +5,7 @@ import ProgramEventModal from "../components/ProgramEventModal";
 import { useFestivalMode } from "../contexts/FestivalModeContext";
 import { useDocumentMeta } from "../hooks/useDocumentMeta";
 import { isSupabaseConfigured } from "../lib/supabase";
-import { fetchPublicEvents } from "../services/events";
+import { fetchPublicEvents, fetchPublicFestivalEvents } from "../services/events";
 import { EventItem } from "../types/domain";
 
 const filters = ["PMR", "Débutant", "Femmes", "Gratuit"];
@@ -30,7 +30,7 @@ function EventsPage() {
       }
 
       try {
-        const nextEvents = await fetchPublicEvents();
+        const nextEvents = festivalMode ? await fetchPublicFestivalEvents() : await fetchPublicEvents();
         if (!active) return;
         setEvents(nextEvents);
       } catch (serviceError) {
@@ -46,7 +46,7 @@ function EventsPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [festivalMode]);
 
   const selectedEventAccent =
     selectedEvent && events.length > 0
@@ -83,7 +83,9 @@ function EventsPage() {
       {error ? <p className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</p> : null}
 
       {!loading && !error && events.length === 0 ? (
-        <p className="rounded-2xl bg-[#ededf1] p-4 text-sm text-[#5c6069]">Aucun événement publié pour le moment.</p>
+        <p className="rounded-2xl bg-[#ededf1] p-4 text-sm text-[#5c6069]">
+          {festivalMode ? "Aucun événement festival publié pour le moment." : "Aucun événement publié pour le moment."}
+        </p>
       ) : null}
 
       {!loading && !error && events.length > 0 ? (
