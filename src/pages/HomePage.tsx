@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import LoadingState from "../components/LoadingState";
 import MatchingModal from "../components/MatchingModal";
+import { useFestivalMode } from "../contexts/FestivalModeContext";
 import { useAuth } from "../hooks/useAuth";
 import { useDocumentMeta } from "../hooks/useDocumentMeta";
 import { isSupabaseConfigured } from "../lib/supabase";
@@ -36,6 +37,7 @@ function HomePage() {
   );
 
   const { profile, isAuthenticated } = useAuth();
+  const { festivalMode, toggleFestivalMode } = useFestivalMode();
   const [isMatchingOpen, setIsMatchingOpen] = useState(false);
   const [mainEvents, setMainEvents] = useState<EventItem[]>([]);
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -73,20 +75,41 @@ function HomePage() {
   }, []);
 
   const mode = useMemo(() => getHomeEventMode(mainEvents), [mainEvents]);
+  const festivalButtonLabel = festivalMode ? "Retourner au mode quotidien" : "Passer en mode festival";
 
   return (
     <div className="space-y-9 pb-4">
       <section className="space-y-2">
-        <h1 className="text-[32px] font-semibold tracking-[-0.01em] text-black">
+        <h1 className={festivalMode ? "text-[32px] font-semibold tracking-[-0.01em] text-white" : "text-[32px] font-semibold tracking-[-0.01em] text-black"}>
           Bienvenue, {profile?.full_name?.split(" ")[0] ?? "Aminata"} <span aria-hidden="true">👋🏼</span>
         </h1>
-        <p className="max-w-[352px] text-base text-[#868688]">
+        <p className={festivalMode ? "max-w-[352px] text-base text-[#cfdbff]" : "max-w-[352px] text-base text-[#868688]"}>
           On t'aide à trouver une séance qui respecte ton énergie, ton budget et tes besoins.
         </p>
         {mode.type === "countdown" ? (
-          <p className="text-sm font-medium text-[#4f4f52]">{buildCountdownLabel(mode.daysRemaining)}</p>
+          <p className={festivalMode ? "text-sm font-medium text-[#c3d4ff]" : "text-sm font-medium text-[#4f4f52]"}>{buildCountdownLabel(mode.daysRemaining)}</p>
         ) : null}
-        {mode.type === "active" ? <p className="text-sm font-medium text-[#4f4f52]">Événement principal en cours</p> : null}
+        {mode.type === "active" ? <p className={festivalMode ? "text-sm font-medium text-[#c3d4ff]" : "text-sm font-medium text-[#4f4f52]"}>Événement principal en cours</p> : null}
+      </section>
+
+      <section className="relative overflow-hidden rounded-[20px] bg-[#dcaef0] px-4 pb-5 pt-7">
+        <span className="pointer-events-none absolute -right-8 -top-8 h-20 w-20 rounded-full border-[10px] border-[#c98ce6]" aria-hidden="true" />
+        <h2 className="max-w-[220px] text-[33px] font-semibold leading-tight tracking-[-0.02em] text-[#14162f]">
+          Le Festival Solimouv&apos; c&apos;est aujourd&apos;hui !
+        </h2>
+        <p className="mt-2 max-w-[320px] text-sm leading-[1.45] text-[#2f3151]">
+          Active le programme spécial du jour pour voir les stands, les initiations et les repères du festival.
+        </p>
+        <button
+          type="button"
+          onClick={toggleFestivalMode}
+          className={festivalMode
+            ? "mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-[#2f468d] bg-transparent px-4 text-base font-semibold text-[#0f1d4b]"
+            : "mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[#050c4e] px-4 text-base font-semibold text-white"}
+        >
+          {festivalButtonLabel}
+          <span aria-hidden="true" className="text-xl leading-none">↗</span>
+        </button>
       </section>
 
       <section className="space-y-4">

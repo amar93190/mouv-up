@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { useFestivalMode } from "../contexts/FestivalModeContext";
 import { useAuth } from "../hooks/useAuth";
 import { cn } from "../utils/cn";
 
@@ -17,9 +18,15 @@ const navItems: NavItem[] = [
 
 function BottomNav() {
   const { isAuthenticated } = useAuth();
+  const { festivalMode } = useFestivalMode();
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 flex justify-center border-t border-slate-200 bg-white/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur md:hidden">
+    <div
+      className={cn(
+        "fixed inset-x-0 bottom-0 z-40 flex justify-center px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur md:hidden",
+        festivalMode ? "border-t border-[#143586] bg-[#05104f]/95" : "border-t border-slate-200 bg-white/95"
+      )}
+    >
       <nav className="grid w-full max-w-[430px] grid-cols-4 gap-1" aria-label="Navigation mobile">
         {navItems.map((item) => {
           const to = item.icon === "pass" && !isAuthenticated ? "/connexion" : item.to;
@@ -30,8 +37,14 @@ function BottomNav() {
               to={to}
               className={({ isActive }) =>
                 cn(
-                  "flex flex-col items-center rounded-2xl px-2 py-2 text-[11px] font-medium text-slate-700 transition",
-                  isActive ? "bg-brand-500 text-white" : "hover:bg-slate-100"
+                  "flex flex-col items-center rounded-2xl px-2 py-2 text-[11px] font-medium transition",
+                  festivalMode
+                    ? isActive
+                      ? "bg-[#8db7ff] text-[#0b1d57]"
+                      : "text-[#d2dcff] hover:bg-[#0f256c]"
+                    : isActive
+                      ? "bg-brand-500 text-white"
+                      : "text-slate-700 hover:bg-slate-100"
                 )
               }
             >

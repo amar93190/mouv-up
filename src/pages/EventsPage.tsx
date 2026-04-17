@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import EventCard from "../components/EventCard";
 import LoadingState from "../components/LoadingState";
 import ProgramEventModal from "../components/ProgramEventModal";
+import { useFestivalMode } from "../contexts/FestivalModeContext";
 import { useDocumentMeta } from "../hooks/useDocumentMeta";
 import { isSupabaseConfigured } from "../lib/supabase";
 import { fetchPublicEvents } from "../services/events";
@@ -17,6 +18,7 @@ function EventsPage() {
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { festivalMode } = useFestivalMode();
 
   useEffect(() => {
     let active = true;
@@ -54,8 +56,10 @@ function EventsPage() {
   return (
     <div className="space-y-5 pb-3">
       <section>
-        <h1 className="text-[32px] font-semibold tracking-[-0.01em] text-black">Cette semaine</h1>
-        <p className="mt-2 max-w-[340px] text-base text-[#868688]">
+        <h1 className={festivalMode ? "text-[32px] font-semibold tracking-[-0.01em] text-white" : "text-[32px] font-semibold tracking-[-0.01em] text-black"}>
+          {festivalMode ? "Programme du Festival" : "Cette semaine"}
+        </h1>
+        <p className={festivalMode ? "mt-2 max-w-[340px] text-base text-[#cfdbff]" : "mt-2 max-w-[340px] text-base text-[#868688]"}>
           Filtre les séances utiles pour toi. Appuie pour voir les détails.
         </p>
       </section>
@@ -65,7 +69,9 @@ function EventsPage() {
           <button
             key={filter}
             type="button"
-            className="shrink-0 rounded-full border border-[#ccc] bg-white px-4 py-2.5 text-base font-medium text-[#4f4f52]"
+            className={festivalMode
+              ? "shrink-0 rounded-full border border-[#3d5eb7] bg-[#0d2a7e] px-4 py-2.5 text-base font-medium text-[#d5e1ff]"
+              : "shrink-0 rounded-full border border-[#ccc] bg-white px-4 py-2.5 text-base font-medium text-[#4f4f52]"}
           >
             {filter}
           </button>

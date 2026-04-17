@@ -1,8 +1,10 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
+import { useFestivalMode } from "../contexts/FestivalModeContext";
 import { useAuth } from "../hooks/useAuth";
 
 function Header() {
   const { isAuthenticated } = useAuth();
+  const { festivalMode } = useFestivalMode();
   const location = useLocation();
 
   if (location.pathname.startsWith("/admin")) {
@@ -28,7 +30,9 @@ function Header() {
 
         <Link
           to={isAuthenticated ? "/profil" : "/connexion"}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#e7e7ea] text-[#22262d]"
+          className={festivalMode
+            ? "inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#0d2d84] text-[#d9e2ff]"
+            : "inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#e7e7ea] text-[#22262d]"}
           aria-label={isAuthenticated ? "Ouvrir le profil" : "Se connecter"}
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8">

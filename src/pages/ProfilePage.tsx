@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import LoadingState from "../components/LoadingState";
+import { useFestivalMode } from "../contexts/FestivalModeContext";
 import { useAuth } from "../hooks/useAuth";
 import { useDocumentMeta } from "../hooks/useDocumentMeta";
 import { fetchMyRegistrations } from "../services/registrations";
@@ -10,6 +11,7 @@ function ProfilePage() {
   useDocumentMeta("Pass", "Ton pass solidaire avec points et historique des présences récentes.");
 
   const { session, signOut } = useAuth();
+  const { festivalMode } = useFestivalMode();
   const [registrations, setRegistrations] = useState<EventRegistrationWithEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,33 +49,35 @@ function ProfilePage() {
   return (
     <div className="space-y-6 pb-3">
       <section>
-        <h1 className="text-[32px] font-semibold tracking-[-0.01em] text-black">Points solidaires</h1>
-        <p className="mt-2 max-w-[352px] text-base text-[#868688]">
+        <h1 className={festivalMode ? "text-[32px] font-semibold tracking-[-0.01em] text-white" : "text-[32px] font-semibold tracking-[-0.01em] text-black"}>Points solidaires</h1>
+        <p className={festivalMode ? "mt-2 max-w-[352px] text-base text-[#cfdbff]" : "mt-2 max-w-[352px] text-base text-[#868688]"}>
           Chaque séance validée fait monter ton compteur et renforce ton parcours.
         </p>
         <div className="mt-3">
           <button
             type="button"
             onClick={() => void signOut()}
-            className="rounded-full border border-[#cfd2d9] bg-white px-3 py-1.5 text-xs font-semibold text-[#3a3f49]"
+            className={festivalMode
+              ? "rounded-full border border-[#33529f] bg-[#0a1f69] px-3 py-1.5 text-xs font-semibold text-[#d7e3ff]"
+              : "rounded-full border border-[#cfd2d9] bg-white px-3 py-1.5 text-xs font-semibold text-[#3a3f49]"}
           >
             Se déconnecter
           </button>
         </div>
       </section>
 
-      <section className="rounded-lg bg-[#fafafa] p-4">
+      <section className={festivalMode ? "rounded-lg border border-[#1a3e98] bg-[#081b62] p-4" : "rounded-lg bg-[#fafafa] p-4"}>
         <div className="mx-auto relative h-32 w-32">
           <img src="/images/figma/ring-base.svg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full" />
           <img src="/images/figma/ring-progress.svg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full" />
           <img src="/images/figma/ring-inner.svg" alt="" aria-hidden="true" className="absolute inset-0 h-full w-full" />
           <div className="absolute inset-0 flex flex-col items-center justify-center pb-1">
-            <span className="text-[32px] font-semibold leading-none tracking-[-0.02em]">{points}</span>
-            <span className="text-[23px] leading-none tracking-[-0.02em] text-[#474749]">Pts</span>
+            <span className={festivalMode ? "text-[32px] font-semibold leading-none tracking-[-0.02em] text-white" : "text-[32px] font-semibold leading-none tracking-[-0.02em]"}>{points}</span>
+            <span className={festivalMode ? "text-[23px] leading-none tracking-[-0.02em] text-[#c7d8ff]" : "text-[23px] leading-none tracking-[-0.02em] text-[#474749]"}>Pts</span>
           </div>
         </div>
 
-        <p className="mt-4 text-center text-base font-semibold tracking-[-0.02em] text-black">Encore 50 points avant le prochain palier</p>
+        <p className={festivalMode ? "mt-4 text-center text-base font-semibold tracking-[-0.02em] text-white" : "mt-4 text-center text-base font-semibold tracking-[-0.02em] text-black"}>Encore 50 points avant le prochain palier</p>
       </section>
 
       <button type="button" className="flex h-14 w-full items-center justify-center gap-2 rounded-[56px] bg-[#0760fc] text-base font-medium text-white">
@@ -81,9 +85,9 @@ function ProfilePage() {
         <QrIcon />
       </button>
 
-      <section className="rounded-xl bg-[#fafafa] px-4 py-8">
+      <section className={festivalMode ? "rounded-xl border border-[#1a3e98] bg-[#081b62] px-4 py-8" : "rounded-xl bg-[#fafafa] px-4 py-8"}>
         <p className="text-base font-medium tracking-[-0.02em] text-[#0760fc]">Historique</p>
-        <h2 className="mt-1 text-[24px] font-semibold tracking-[-0.02em] text-black">Présences récentes</h2>
+        <h2 className={festivalMode ? "mt-1 text-[24px] font-semibold tracking-[-0.02em] text-white" : "mt-1 text-[24px] font-semibold tracking-[-0.02em] text-black"}>Présences récentes</h2>
 
         {loading ? (
           <div className="mt-3">
@@ -104,9 +108,9 @@ function ProfilePage() {
         {!loading && !error ? (
           <div className="mt-4 space-y-4">
             {registrations.slice(0, 4).map((registration) => (
-              <article key={registration.id} className="rounded-lg bg-white p-4">
-                <p className="text-base font-semibold tracking-[-0.02em] text-black">+50 pts</p>
-                <p className="mt-2 text-base tracking-[-0.02em] text-[#474749]">{registration.events.title}</p>
+              <article key={registration.id} className={festivalMode ? "rounded-lg bg-[#0f2a81] p-4" : "rounded-lg bg-white p-4"}>
+                <p className={festivalMode ? "text-base font-semibold tracking-[-0.02em] text-white" : "text-base font-semibold tracking-[-0.02em] text-black"}>+50 pts</p>
+                <p className={festivalMode ? "mt-2 text-base tracking-[-0.02em] text-[#c9dbff]" : "mt-2 text-base tracking-[-0.02em] text-[#474749]"}>{registration.events.title}</p>
               </article>
             ))}
           </div>
