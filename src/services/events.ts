@@ -1,10 +1,21 @@
 import { supabase } from "../lib/supabase";
 import { EventItem, EventWriteInput } from "../types/domain";
+import { normalizeArrowSymbols } from "../utils/textSymbols";
 
 const EVENT_SELECT =
   "id,title,slug,short_description,long_description,start_date,end_date,location,cover_image,is_published,is_main_event,created_by,organization_id,created_at,updated_at";
 const FESTIVAL_EVENT_SELECT =
   "id,title,slug,short_description,long_description,start_date,end_date,location,cover_image,is_published,is_main_event,created_by,organization_id,created_at,updated_at";
+
+function normalizeEventText(event: EventItem): EventItem {
+  return {
+    ...event,
+    title: normalizeArrowSymbols(event.title),
+    short_description: normalizeArrowSymbols(event.short_description),
+    long_description: normalizeArrowSymbols(event.long_description),
+    location: normalizeArrowSymbols(event.location)
+  };
+}
 
 export async function fetchPublicEvents() {
   const { data, error } = await supabase
@@ -14,7 +25,7 @@ export async function fetchPublicEvents() {
     .order("start_date", { ascending: true });
 
   if (error) throw new Error(error.message);
-  return (data ?? []) as EventItem[];
+  return ((data ?? []) as EventItem[]).map(normalizeEventText);
 }
 
 export async function fetchPublicFestivalEvents() {
@@ -25,7 +36,7 @@ export async function fetchPublicFestivalEvents() {
     .order("start_date", { ascending: true });
 
   if (error) throw new Error(error.message);
-  return (data ?? []) as EventItem[];
+  return ((data ?? []) as EventItem[]).map(normalizeEventText);
 }
 
 export async function fetchPublicMainEvents() {
@@ -37,7 +48,7 @@ export async function fetchPublicMainEvents() {
     .order("start_date", { ascending: true });
 
   if (error) throw new Error(error.message);
-  return (data ?? []) as EventItem[];
+  return ((data ?? []) as EventItem[]).map(normalizeEventText);
 }
 
 export async function fetchPublicFestivalMainEvents() {
@@ -49,7 +60,7 @@ export async function fetchPublicFestivalMainEvents() {
     .order("start_date", { ascending: true });
 
   if (error) throw new Error(error.message);
-  return (data ?? []) as EventItem[];
+  return ((data ?? []) as EventItem[]).map(normalizeEventText);
 }
 
 export async function fetchPublicEventBySlug(slug: string) {
@@ -61,7 +72,7 @@ export async function fetchPublicEventBySlug(slug: string) {
     .maybeSingle();
 
   if (error) throw new Error(error.message);
-  return (data as EventItem | null) ?? null;
+  return data ? normalizeEventText(data as EventItem) : null;
 }
 
 export async function fetchAdminEvents() {
@@ -71,7 +82,7 @@ export async function fetchAdminEvents() {
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);
-  return (data ?? []) as EventItem[];
+  return ((data ?? []) as EventItem[]).map(normalizeEventText);
 }
 
 export async function fetchAdminEventById(eventId: string) {
@@ -82,7 +93,7 @@ export async function fetchAdminEventById(eventId: string) {
     .maybeSingle();
 
   if (error) throw new Error(error.message);
-  return (data as EventItem | null) ?? null;
+  return data ? normalizeEventText(data as EventItem) : null;
 }
 
 export async function createEvent(input: EventWriteInput, createdBy: string) {
@@ -93,7 +104,7 @@ export async function createEvent(input: EventWriteInput, createdBy: string) {
     .single();
 
   if (error) throw new Error(error.message);
-  return data as EventItem;
+  return normalizeEventText(data as EventItem);
 }
 
 export async function updateEvent(eventId: string, input: EventWriteInput) {
@@ -105,7 +116,7 @@ export async function updateEvent(eventId: string, input: EventWriteInput) {
     .single();
 
   if (error) throw new Error(error.message);
-  return data as EventItem;
+  return normalizeEventText(data as EventItem);
 }
 
 export async function deleteEvent(eventId: string) {

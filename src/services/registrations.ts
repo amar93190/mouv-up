@@ -1,5 +1,6 @@
 import { supabase } from "../lib/supabase";
 import { EventRegistration, EventRegistrationWithEvent } from "../types/domain";
+import { normalizeArrowSymbols } from "../utils/textSymbols";
 
 export async function fetchRegistrationByEvent(userId: string, eventId: string) {
   const { data, error } = await supabase
@@ -62,7 +63,11 @@ export async function fetchMyRegistrations(userId: string) {
 
       return {
         ...item,
-        events: eventRecord
+        events: {
+          ...eventRecord,
+          title: normalizeArrowSymbols(eventRecord.title),
+          location: normalizeArrowSymbols(eventRecord.location)
+        }
       };
     })
     .filter(Boolean);
