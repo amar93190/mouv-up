@@ -20,8 +20,8 @@ export default defineConfig(({ mode }) => {
           short_name: "Solimouv",
           description:
             "L'application officielle du festival Solimouv' organisé par Up Sport! pour promouvoir un sport inclusif et accessible.",
-          theme_color: "#f1f1f4",
-          background_color: "#f1f1f4",
+          theme_color: "#ececf0",
+          background_color: "#ececf0",
           display: "standalone",
           start_url: "/",
           scope: "/",

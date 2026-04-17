@@ -108,7 +108,11 @@ function Header() {
         : "mb-5 flex items-center justify-between md:mb-0 md:rounded-[18px] md:border md:border-[#e2e4ea] md:bg-white md:px-8 md:py-5 md:shadow-[0_10px_30px_rgba(19,22,29,0.06)]"}
       >
         <Link to="/" aria-label="Aller à l'accueil">
-          <img src="/images/figma/logo-home.svg" alt="Solimouv’" className="h-[54px] w-[105px] object-contain md:h-[60px] md:w-[120px]" />
+          <img
+            src={festivalMode ? "/images/figma/logo-home-white.svg" : "/images/figma/logo-home.svg"}
+            alt="Solimouv’"
+            className="h-[54px] w-[105px] object-contain md:h-[60px] md:w-[120px]"
+          />
         </Link>
 
         <div className="flex items-center gap-3 md:gap-4">

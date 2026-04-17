@@ -1,5 +1,6 @@
 import { FormEvent, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useFestivalMode } from "../contexts/FestivalModeContext";
 import { useAuth } from "../hooks/useAuth";
 import { useDocumentMeta } from "../hooks/useDocumentMeta";
 
@@ -7,6 +8,7 @@ function AuthPage() {
   useDocumentMeta("Connexion / Inscription");
 
   const { isAuthenticated, signIn, signUp } = useAuth();
+  const { festivalMode } = useFestivalMode();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -52,31 +54,53 @@ function AuthPage() {
   return (
     <div className="space-y-5 pb-3 md:grid md:grid-cols-12 md:gap-8 md:space-y-0">
       <section className="md:col-span-5 md:pt-6">
-        <h1 className="text-6xl font-black leading-[0.9] text-[#0f1218] md:text-[74px]">Connexion</h1>
+        <h1 className={`text-6xl font-black leading-[0.9] md:text-[74px] ${festivalMode ? "text-white" : "text-[#0f1218]"}`}>Connexion</h1>
         <p className="mt-3 max-w-[340px] text-lg leading-snug text-[#7f828b]">
           Connecte-toi pour t'inscrire aux événements et accéder au Pass.
         </p>
       </section>
 
-      <section className="rounded-3xl bg-[#ededf1] p-4 md:col-span-7 md:p-8">
+      <section
+        className={`rounded-3xl p-4 md:col-span-7 md:p-8 ${
+          festivalMode
+            ? "border border-[#264db7] bg-[#0b297e] text-[#e8eeff]"
+            : "bg-[#ededf1]"
+        }`}
+      >
         {isAuthenticated ? (
-          <p className="mb-3 rounded-2xl border border-green-200 bg-green-50 p-3 text-sm text-green-800">
+          <p className="mb-3 rounded-2xl border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">
             Tu es déjà connecté. <Link to="/profil" className="underline">Accéder au profil</Link>
           </p>
         ) : null}
 
-        <div className="mb-3 grid grid-cols-2 gap-2 rounded-full bg-[#e2e3e8] p-1">
+        <div className={`mb-3 grid grid-cols-2 gap-2 rounded-full p-1 ${festivalMode ? "bg-[#10328f]" : "bg-[#e2e3e8]"}`}>
           <button
             type="button"
             onClick={() => setMode("signin")}
-            className={`rounded-full px-3 py-2 text-sm font-semibold ${mode === "signin" ? "bg-brand-500 text-white" : "text-[#525762]"}`}
+            className={`rounded-full px-3 py-2 text-sm font-semibold ${
+              mode === "signin"
+                ? festivalMode
+                  ? "bg-[#7fa8ff] text-[#081a60]"
+                  : "bg-brand-500 text-white"
+                : festivalMode
+                  ? "text-[#cdd9ff]"
+                  : "text-[#525762]"
+            }`}
           >
             Connexion
           </button>
           <button
             type="button"
             onClick={() => setMode("signup")}
-            className={`rounded-full px-3 py-2 text-sm font-semibold ${mode === "signup" ? "bg-brand-500 text-white" : "text-[#525762]"}`}
+            className={`rounded-full px-3 py-2 text-sm font-semibold ${
+              mode === "signup"
+                ? festivalMode
+                  ? "bg-[#7fa8ff] text-[#081a60]"
+                  : "bg-brand-500 text-white"
+                : festivalMode
+                  ? "text-[#cdd9ff]"
+                  : "text-[#525762]"
+            }`}
           >
             Inscription
           </button>
@@ -85,31 +109,39 @@ function AuthPage() {
         <form className="space-y-3 md:space-y-4" onSubmit={handleSubmit}>
           {mode === "signup" ? (
             <div>
-              <label htmlFor="full-name" className="mb-1 block text-sm font-medium text-[#161a20]">Nom complet</label>
+              <label htmlFor="full-name" className={`mb-1 block text-sm font-medium ${festivalMode ? "text-[#e8eeff]" : "text-[#161a20]"}`}>Nom complet</label>
               <input
                 id="full-name"
                 value={fullName}
                 onChange={(event) => setFullName(event.target.value)}
                 required
-                className="h-12 w-full rounded-2xl border border-[#cfd2da] bg-white px-4 text-sm"
+                className={`h-12 w-full rounded-2xl border px-4 text-sm ${
+                  festivalMode
+                    ? "border-[#3d61be] bg-[#112f86] text-white placeholder:text-[#aebeea]"
+                    : "border-[#cfd2da] bg-white"
+                }`}
               />
             </div>
           ) : null}
 
           <div>
-            <label htmlFor="email" className="mb-1 block text-sm font-medium text-[#161a20]">Email</label>
+            <label htmlFor="email" className={`mb-1 block text-sm font-medium ${festivalMode ? "text-[#e8eeff]" : "text-[#161a20]"}`}>Email</label>
             <input
               id="email"
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               required
-              className="h-12 w-full rounded-2xl border border-[#cfd2da] bg-white px-4 text-sm"
+              className={`h-12 w-full rounded-2xl border px-4 text-sm ${
+                festivalMode
+                  ? "border-[#3d61be] bg-[#112f86] text-white placeholder:text-[#aebeea]"
+                  : "border-[#cfd2da] bg-white"
+              }`}
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-medium text-[#161a20]">Mot de passe</label>
+            <label htmlFor="password" className={`mb-1 block text-sm font-medium ${festivalMode ? "text-[#e8eeff]" : "text-[#161a20]"}`}>Mot de passe</label>
             <input
               id="password"
               type="password"
@@ -117,16 +149,28 @@ function AuthPage() {
               onChange={(event) => setPassword(event.target.value)}
               required
               minLength={6}
-              className="h-12 w-full rounded-2xl border border-[#cfd2da] bg-white px-4 text-sm"
+              className={`h-12 w-full rounded-2xl border px-4 text-sm ${
+                festivalMode
+                  ? "border-[#3d61be] bg-[#112f86] text-white placeholder:text-[#aebeea]"
+                  : "border-[#cfd2da] bg-white"
+              }`}
             />
           </div>
 
-          <button type="submit" disabled={isSubmitting} className="mt-2 flex h-12 w-full items-center justify-center rounded-full bg-brand-500 text-sm font-semibold text-white disabled:opacity-60">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className={`mt-2 flex h-12 w-full items-center justify-center rounded-full text-sm font-semibold disabled:opacity-60 ${
+              festivalMode
+                ? "bg-[#7fa8ff] text-[#081a60]"
+                : "bg-brand-500 text-white"
+            }`}
+          >
             {isSubmitting ? "Traitement..." : mode === "signin" ? "Se connecter" : "Créer un compte"}
           </button>
         </form>
 
-        {message ? <p className="mt-3 text-sm text-[#4e535d]">{message}</p> : null}
+        {message ? <p className={`mt-3 text-sm ${festivalMode ? "text-[#d3defd]" : "text-[#4e535d]"}`}>{message}</p> : null}
       </section>
     </div>
   );

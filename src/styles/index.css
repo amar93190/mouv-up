@@ -25,6 +25,10 @@
     background-color: var(--soli-bg);
   }
 
+  #root {
+    min-height: 100vh;
+  }
+
   * {
     box-sizing: border-box;
   }
@@ -37,6 +41,20 @@
   input,
   textarea {
     font: inherit;
+  }
+
+  html.ios-pwa .route-transition {
+    animation: none !important;
+    transform: none !important;
+    filter: none !important;
+    will-change: auto;
+    backface-visibility: visible;
+  }
+
+  html.ios-pwa input,
+  html.ios-pwa textarea,
+  html.ios-pwa select {
+    font-size: 16px;
   }
 }
 

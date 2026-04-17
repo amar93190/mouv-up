@@ -4,6 +4,16 @@ import { registerSW } from "virtual:pwa-register";
 import App from "./App";
 import "./styles/index.css";
 
+if (typeof window !== "undefined") {
+  const isIOS = /iPhone|iPad|iPod/i.test(window.navigator.userAgent || "");
+  const nav = window.navigator as Navigator & { standalone?: boolean };
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches || Boolean(nav.standalone);
+
+  if (isIOS && isStandalone) {
+    document.documentElement.classList.add("ios-pwa");
+  }
+}
+
 const enablePwaDev = import.meta.env.DEV && import.meta.env.VITE_ENABLE_PWA_DEV === "true";
 
 if (import.meta.env.DEV && "serviceWorker" in navigator && !enablePwaDev) {

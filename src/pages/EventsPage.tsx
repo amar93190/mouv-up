@@ -9,7 +9,7 @@ import { fetchPublicEvents, fetchPublicFestivalEvents } from "../services/events
 import { EventItem } from "../types/domain";
 
 const filters = ["PMR", "Débutant", "Femmes", "Gratuit"];
-const cardAccentColors = ["#0760fc", "#8658f4", "#39e397", "#f8ef74"];
+const cardAccentColors = ["#0760fc", "#8658f4", "#6ea8ff", "#f8ef74"];
 
 function EventsPage() {
   useDocumentMeta("Programme", "Filtre les séances et découvre les événements publiés par les organisateurs Solimouv’.");

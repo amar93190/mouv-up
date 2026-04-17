@@ -230,7 +230,7 @@ function AdminEventsPage() {
                   <p className="mt-2 text-xs text-slate-600">{formatDateTime(event.start_date)} · {event.location}</p>
                   <div className="mt-2 flex flex-wrap gap-2">
                     <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                      event.is_published ? "bg-green-100 text-green-800" : "bg-slate-200 text-slate-700"
+                      event.is_published ? "bg-blue-100 text-blue-800" : "bg-slate-200 text-slate-700"
                     }`}>
                       {event.is_published ? "Publié" : "Brouillon"}
                     </span>
@@ -338,13 +338,13 @@ function AnalyticsChart({ buckets }: AnalyticsChartProps) {
     <section className="rounded-lg border border-slate-200 bg-white p-4">
       <div className="mb-3 flex flex-wrap items-center gap-4 text-xs text-slate-600">
         <LegendDot color="#2563eb" label="Inscrits application" />
-        <LegendDot color="#16a34a" label="Inscriptions événements" />
+        <LegendDot color="#7c3aed" label="Inscriptions événements" />
       </div>
       <div className="overflow-x-auto">
         <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="h-[220px] w-full min-w-[560px]">
           <line x1="20" y1={chartBottom} x2={chartWidth - 16} y2={chartBottom} stroke="#d1d5db" strokeWidth="1" />
           <path d={buildSmoothPath(userPoints)} fill="none" stroke="#2563eb" strokeWidth="3" />
-          <path d={buildSmoothPath(registrationPoints)} fill="none" stroke="#16a34a" strokeWidth="3" />
+          <path d={buildSmoothPath(registrationPoints)} fill="none" stroke="#7c3aed" strokeWidth="3" />
           {buckets.map((bucket, index) => {
             const x = 28 + index * pointGap;
             const usersY = chartBottom - (bucket.userSignups / maxValue) * lineMaxHeight;
@@ -354,7 +354,7 @@ function AnalyticsChart({ buckets }: AnalyticsChartProps) {
             return (
               <g key={bucket.label}>
                 <circle cx={x} cy={usersY} r="3.5" fill="#2563eb" />
-                <circle cx={x} cy={regsY} r="3.5" fill="#16a34a" />
+                <circle cx={x} cy={regsY} r="3.5" fill="#7c3aed" />
                 <text x={x} y="198" textAnchor="middle" fontSize="10" fill="#64748b">
                   {bucket.label}
                 </text>

@@ -37,7 +37,7 @@ function ContactPage() {
         </form>
 
         {submitted ? (
-          <p className="mt-3 rounded-2xl border border-green-200 bg-green-50 p-3 text-sm text-green-800">Message bien envoyé.</p>
+          <p className="mt-3 rounded-2xl border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800">Message bien envoyé.</p>
         ) : null}
       </section>
     </div>

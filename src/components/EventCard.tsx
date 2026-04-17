@@ -23,10 +23,10 @@ const palette = [
     meta: "text-[#e7e7e7]"
   },
   {
-    card: "bg-[#39e397] text-[#232325]",
-    button: "bg-[#34cf89]",
-    deco: "/images/figma/program-card-green.svg",
-    meta: "text-[#3d3d40]"
+    card: "bg-[#6ea8ff] text-[#0f2e6e]",
+    button: "bg-[#3f7de0]",
+    deco: "/images/figma/program-card-blue.svg",
+    meta: "text-[#284072]"
   },
   {
     card: "bg-[#f8ef74] text-[#232325]",
